@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		D51BDB6D2D478D9C00F6DEDD /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = D51BDB6B2D478D9C00F6DEDD /* .gitignore */; };
 		D51BDB6E2D478D9C00F6DEDD /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = D51BDB6C2D478D9C00F6DEDD /* .swiftlint.yml */; };
+		D51BDB862D49372600F6DEDD /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = D51BDB852D49372600F6DEDD /* Config.xcconfig */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -34,6 +35,7 @@
 		D51BDB572D46E21000F6DEDD /* ImageSearchUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ImageSearchUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D51BDB6B2D478D9C00F6DEDD /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		D51BDB6C2D478D9C00F6DEDD /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
+		D51BDB852D49372600F6DEDD /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -95,6 +97,7 @@
 		D51BDB2E2D46E20E00F6DEDD = {
 			isa = PBXGroup;
 			children = (
+				D51BDB852D49372600F6DEDD /* Config.xcconfig */,
 				D51BDB6B2D478D9C00F6DEDD /* .gitignore */,
 				D51BDB6C2D478D9C00F6DEDD /* .swiftlint.yml */,
 				D51BDB392D46E20E00F6DEDD /* ImageSearch */,
@@ -235,6 +238,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D51BDB862D49372600F6DEDD /* Config.xcconfig in Resources */,
 				D51BDB6D2D478D9C00F6DEDD /* .gitignore in Resources */,
 				D51BDB6E2D478D9C00F6DEDD /* .swiftlint.yml in Resources */,
 			);
