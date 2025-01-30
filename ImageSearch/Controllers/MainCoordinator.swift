@@ -4,7 +4,7 @@ class MainCoordinator: Coordinator {
     private(set) var children: [any Coordinator] = []
     private let window: UIWindow
     private let navigatioinController = UINavigationController()
-    
+
     init(window: UIWindow) {
         self.window = window
         self.window.rootViewController = navigatioinController

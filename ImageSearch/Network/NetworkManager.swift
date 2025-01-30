@@ -13,8 +13,18 @@ class NetworkManager {
         apiKey = key
     }
 
-    func getImages(query: String, userPreferences: Preferences) -> AnyPublisher<ISImage, ISNetworkError> {
-        let url = formURL(from: query, with: userPreferences)
+    func getImages(
+        query: String,
+        page: Int,
+        userPreferences: Preferences
+    ) -> AnyPublisher<APIImagesResponse, ISNetworkError> {
+        guard let url = formURL(from: query, at: page, with: userPreferences) else {
+            return Fail(error: ISNetworkError.badRequest).eraseToAnyPublisher()
+        }
+        return createPublisher(type: APIImagesResponse.self, url: url)
+    }
+    
+    private func createPublisher<T: Decodable>(type: T.Type, url: URL) -> AnyPublisher<T, ISNetworkError> {
         return URLSession.shared.dataTaskPublisher(for: url)
             .tryMap { data, response in
                 guard let httpResponse = response as? HTTPURLResponse else { throw ISNetworkError.badResponse }
@@ -23,18 +33,20 @@ class NetworkManager {
                 }
                 return data
             }
-            .decode(type: ISImage.self, decoder: decoder)
+            .decode(type: type, decoder: decoder)
             .mapError { ($0 as? ISNetworkError) ?? .invalidData }
             .eraseToAnyPublisher()
     }
 
-    private func formURL(from query: String, with preferences: Preferences) -> URL {
+    private func formURL(from query: String, at page: Int, with preferences: Preferences) -> URL? {
         var urlComponents = URLComponents(string: endpoint)
         let baseQueryItems = [
-            URLQueryItem(name: "key", value: apiKey), URLQueryItem(name: "q", value: query.formattedForQuery)
+            URLQueryItem(name: "key", value: apiKey),
+            URLQueryItem(name: "q", value: query.formattedForQuery),
+            URLQueryItem(name: "page", value: String(page))
         ]
         let formattedPreferences = preferences.asDict.map { URLQueryItem(name: $0.key, value: $0.value) }
         urlComponents?.queryItems = baseQueryItems + formattedPreferences
-        return urlComponents!.url!
+        return urlComponents?.url
     }
 }

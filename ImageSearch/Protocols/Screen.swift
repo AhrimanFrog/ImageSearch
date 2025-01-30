@@ -4,7 +4,7 @@ protocol Screen: UIView {
     associatedtype GenericVM: ViewModel
     var viewModel: GenericVM { get }
 
-    func viewDidLoad() -> Void
+    func viewDidLoad()
 }
 
 class ISScreen<VM: ViewModel>: UIView, Screen {
@@ -12,11 +12,10 @@ class ISScreen<VM: ViewModel>: UIView, Screen {
 
     init(viewModel: VM) {
         self.viewModel = viewModel
+        super.init(frame: .zero)
     }
 
-    func viewDidLoad() {
-        preconditionFailure("This method must be overridden")
-    }
+    func viewDidLoad() {}
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
