@@ -53,24 +53,30 @@ struct Preferences {
         case music
     }
 
-    let imageType: ImageType = .all
-    let orientation: Orientation = .all
-    let category: Category?
-    let minWidth: Int = 0
-    let minHeight: Int = 0
-    let colors: [Color] = []
-    let safeSerach: Bool = false
-    let order: Order = .popular
+    var imageType: ImageType = .all
+    var orientation: Orientation = .all
+    var category: Category?
+    var minWidth: Int = 0
+    var minHeight: Int = 0
+    var colors: [Color] = []
+    var safeSerach: Bool = false
+    var order: Order = .popular
     
+    private func prepareColors() -> String? {
+        guard !colors.isEmpty else { return nil }
+        return colors.map { $0.rawValue }.joined(separator: ",")
+    }
 
-    var asDict: [String: String] {
+    var asDict: [String: String?] {
         return [
             "image_type": imageType.rawValue,
             "orientation": orientation.rawValue,
             "min_width": String(minWidth),
             "min_height": String(minHeight),
             "order": order.rawValue,
-            "safesearch": order.rawValue
+            "colors": prepareColors(),
+            "safesearch": order.rawValue,
+            "category": category?.rawValue
         ]
     }
 }

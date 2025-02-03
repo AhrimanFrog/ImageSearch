@@ -14,12 +14,10 @@ final class TitleSearchScreen: ISScreen<TitleSearchViewModel> {
     }
 
     private func bind() {
-        
     }
 
     private func configure() {
-        addSubview(backgroundImage)
-        backgroundImage.addSubviews(title, searchField, searchButton)
+        addSubviews(backgroundImage, title, searchField, searchButton)
         backgroundImage.snp.makeConstraints { $0.edges.equalToSuperview() }
     }
 }

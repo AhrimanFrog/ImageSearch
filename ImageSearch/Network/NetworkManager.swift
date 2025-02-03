@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+import UIKit
 
 class NetworkManager {
     private let endpoint = "https://pixabay.com/api/"
@@ -23,7 +24,7 @@ class NetworkManager {
         }
         return createPublisher(type: APIImagesResponse.self, url: url)
     }
-    
+
     private func createPublisher<T: Decodable>(type: T.Type, url: URL) -> AnyPublisher<T, ISNetworkError> {
         return URLSession.shared.dataTaskPublisher(for: url)
             .tryMap { data, response in
@@ -45,7 +46,9 @@ class NetworkManager {
             URLQueryItem(name: "q", value: query.formattedForQuery),
             URLQueryItem(name: "page", value: String(page))
         ]
-        let formattedPreferences = preferences.asDict.map { URLQueryItem(name: $0.key, value: $0.value) }
+        let formattedPreferences = preferences.asDict.compactMap {
+            $0.value == nil ? nil : URLQueryItem(name: $0.key, value: $0.value)
+        }
         urlComponents?.queryItems = baseQueryItems + formattedPreferences
         return urlComponents?.url
     }
