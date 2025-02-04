@@ -11,8 +11,6 @@
 		D51BDB6E2D478D9C00F6DEDD /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = D51BDB6C2D478D9C00F6DEDD /* .swiftlint.yml */; };
 		D51BDB862D49372600F6DEDD /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = D51BDB852D49372600F6DEDD /* Config.xcconfig */; };
 		D51BDDE32D4BCF7F00F6DEDD /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = D51BDDE22D4BCF7F00F6DEDD /* SnapKit */; };
-		D51BDDE52D4BCF7F00F6DEDD /* SnapKit-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = D51BDDE42D4BCF7F00F6DEDD /* SnapKit-Dynamic */; };
-		D51BDDE62D4BCF7F00F6DEDD /* SnapKit-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = D51BDDE42D4BCF7F00F6DEDD /* SnapKit-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -39,7 +37,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				D51BDDE62D4BCF7F00F6DEDD /* SnapKit-Dynamic in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -92,7 +89,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				D51BDDE32D4BCF7F00F6DEDD /* SnapKit in Frameworks */,
-				D51BDDE52D4BCF7F00F6DEDD /* SnapKit-Dynamic in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -167,7 +163,6 @@
 			name = ImageSearch;
 			packageProductDependencies = (
 				D51BDDE22D4BCF7F00F6DEDD /* SnapKit */,
-				D51BDDE42D4BCF7F00F6DEDD /* SnapKit-Dynamic */,
 			);
 			productName = ImageSearch;
 			productReference = D51BDB372D46E20E00F6DEDD /* ImageSearch.app */;
@@ -409,6 +404,7 @@
 		};
 		D51BDB632D46E21000F6DEDD /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D51BDB852D49372600F6DEDD /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -472,6 +468,7 @@
 		};
 		D51BDB642D46E21000F6DEDD /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D51BDB852D49372600F6DEDD /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -651,11 +648,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = D51BDDE02D4BCF5700F6DEDD /* XCRemoteSwiftPackageReference "SnapKit" */;
 			productName = SnapKit;
-		};
-		D51BDDE42D4BCF7F00F6DEDD /* SnapKit-Dynamic */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = D51BDDE02D4BCF5700F6DEDD /* XCRemoteSwiftPackageReference "SnapKit" */;
-			productName = "SnapKit-Dynamic";
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

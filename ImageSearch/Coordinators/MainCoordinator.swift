@@ -12,7 +12,7 @@ class MainCoordinator: Coordinator {
 
     func start() {
         let searchController = HostingController(
-            contentView: TitleSearchScreen(viewModel: TitleSearchViewModel())
+            contentView: TitleSearchScreen(viewModel: TitleSearchViewModel(networkManager: NetworkManager()))
         )
         navigatioinController.setViewControllers([searchController], animated: false)
         window.makeKeyAndVisible()

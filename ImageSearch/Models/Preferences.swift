@@ -29,7 +29,7 @@ struct Preferences {
     enum Order: String {
         case popular, latest
     }
-    
+
     enum Category: String {
         case backgrounds
         case fashion
@@ -61,7 +61,7 @@ struct Preferences {
     var colors: [Color] = []
     var safeSerach: Bool = false
     var order: Order = .popular
-    
+
     private func prepareColors() -> String? {
         guard !colors.isEmpty else { return nil }
         return colors.map { $0.rawValue }.joined(separator: ",")

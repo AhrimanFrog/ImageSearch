@@ -12,7 +12,7 @@ class ISButton: UIButton {
 
     private func configure(title: String, image: UIImage.SFImage) {
         configuration = .filled()
-        configuration?.baseBackgroundColor = .systemPurple
+        configuration?.baseBackgroundColor = .init(red: 0.261, green: 0.044, blue: 0.879, alpha: 1)
         configuration?.baseForegroundColor = .white
         configuration?.title = title
         configuration?.image = UIImage(sfImage: image)
