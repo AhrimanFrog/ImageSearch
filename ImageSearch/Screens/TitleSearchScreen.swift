@@ -1,5 +1,6 @@
 import UIKit
 import SnapKit
+import Combine
 
 final class TitleSearchScreen: ISScreen<TitleSearchViewModel> {
     private let title = ISTitleLabel()
@@ -14,7 +15,20 @@ final class TitleSearchScreen: ISScreen<TitleSearchViewModel> {
         setConstraints()
     }
 
+    private func transitToResults(of input: String) {
+        // TODO: show loading view
+        viewModel.transitToResults(of: input)
+    }
+
     private func bind() {
+        searchField.addInputProcessor { [weak self] input in self?.transitToResults(of: input) }
+        searchButton.addAction(
+            UIAction { [weak self] _ in
+                guard let text = self?.searchField.text, !text.isEmpty else { return }
+                self?.transitToResults(of: text)
+            },
+            for: .touchUpInside
+        )
     }
 
     private func configure() {
@@ -47,10 +61,20 @@ final class TitleSearchScreen: ISScreen<TitleSearchViewModel> {
 
 final class TitleSearchViewModel: ViewModel {
     private let networkManager: NetworkManager
+    private let requestTransitionToResults: (Result<APIImagesResponse, ISNetworkError>) -> Void
+    private var apiSubscription: AnyCancellable?
 
-    @Published var images: [ISImage] = []
-
-    init(networkManager: NetworkManager) {
+    init(
+        networkManager: NetworkManager,
+        coordinatorNotifier: @escaping (Result<APIImagesResponse, ISNetworkError>) -> Void
+    ) {
         self.networkManager = networkManager
+        requestTransitionToResults = coordinatorNotifier
+    }
+
+    func transitToResults(of request: String) {
+        apiSubscription = networkManager // TODO: get preferences from user defaults
+            .getImages(query: request, page: 1, userPreferences: Preferences())
+            .sink(resultHandler: requestTransitionToResults)
     }
 }

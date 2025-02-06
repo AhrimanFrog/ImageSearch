@@ -24,9 +24,20 @@ class ISSearchField: UITextField {
         fatalError("init(coder:) has not been implemented")
     }
 
+    func addInputProcessor(_ processor: @escaping (String) -> Void) {
+        addAction(UIAction { [weak self] _ in processor(self?.text ?? "") }, for: .editingDidEnd)
+    }
+
     private func configure() {
         placeholder = "Search images, vectors and more"
         layer.backgroundColor = UIColor(red: 0.887, green: 0.887, blue: 0.887, alpha: 1).cgColor
         layer.cornerRadius = 8
+    }
+}
+
+extension ISSearchField: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
     }
 }

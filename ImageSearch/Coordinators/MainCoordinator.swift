@@ -3,7 +3,7 @@ import UIKit
 class MainCoordinator: Coordinator {
     enum Destination {
         case start
-        case results([ISImage])
+        case results(APIImagesResponse)
         case photo
     }
 
@@ -15,6 +15,7 @@ class MainCoordinator: Coordinator {
     init(window: UIWindow) {
         self.window = window
         self.window.rootViewController = navigatioinController
+        screenFactory.navigationHandler = self
     }
 
     func start() {
@@ -26,8 +27,10 @@ class MainCoordinator: Coordinator {
         switch destination {
         case .start:
             navigatioinController.setViewControllers([screenFactory.build(screen: .start)], animated: true)
+        case .results(let response):
+            print("TOTAL RESULTS: \(response.total)")
         default:
-            navigatioinController.pushViewController(screenFactory.build(screen: destination), animated: true)
+            fatalError("Not implemented")
         }
     }
 
