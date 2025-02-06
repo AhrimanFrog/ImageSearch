@@ -13,11 +13,11 @@ class ISSearchField: UITextField {
     }
 
     override func placeholderRect(forBounds bounds: CGRect) -> CGRect {
-        bounds.inset(by: padding)
+        return bounds.inset(by: padding)
     }
 
     override func textRect(forBounds bounds: CGRect) -> CGRect {
-        bounds.inset(by: padding)
+        return bounds.inset(by: padding)
     }
 
     required init?(coder: NSCoder) {

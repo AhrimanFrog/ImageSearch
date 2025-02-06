@@ -5,6 +5,7 @@ import UIKit
 class NetworkManager {
     private let endpoint = "https://pixabay.com/api/"
     private let decoder = JSONDecoder()
+    private let cache = NSCache<NSString, UIImage>()
     private let apiKey: String
 
     init() {
