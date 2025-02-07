@@ -1,9 +1,6 @@
 import UIKit
 
 protocol Screen: UIView {
-    associatedtype GenericVM: ViewModel
-    var viewModel: GenericVM { get }
-
     func viewDidLoad()
 }
 
