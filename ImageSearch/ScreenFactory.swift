@@ -12,6 +12,7 @@ class ScreenFactory {
     func build(screen: MainCoordinator.Destination) -> UIViewController {
         switch screen {
         case .start: return HostingController(contentView: titleScreen())
+        case .results(let response): return HostingController(contentView: resultsScreen(response))
         default: fatalError("Not implemented")
         }
     }
@@ -24,5 +25,15 @@ class ScreenFactory {
             }
         }
         return TitleSearchScreen(viewModel: titleViewModel)
+    }
+    
+    private func resultsScreen(_ response: APIImagesResponse) -> SearchResultsScreen {
+        let dependencies = SearchResultsViewModel.Dependencies(
+            networkManager: networkManager,
+            initialResults: response,
+            query: "",
+            navigationHandler: {}
+        )
+        return SearchResultsScreen(viewModel: SearchResultsViewModel(dependencies: dependencies))
     }
 }

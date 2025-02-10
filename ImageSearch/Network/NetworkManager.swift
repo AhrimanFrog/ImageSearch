@@ -23,10 +23,20 @@ class NetworkManager {
         guard let url = formURL(from: query, at: page, with: userPreferences) else {
             return Fail(error: ISNetworkError.badRequest).eraseToAnyPublisher()
         }
-        return createPublisher(type: APIImagesResponse.self, url: url)
+        return createPublisher(url: url)
+            .decode(type: APIImagesResponse.self, decoder: decoder)
+            .mapError { ($0 as? ISNetworkError) ?? .invalidData }
+            .eraseToAnyPublisher()
     }
 
-    private func createPublisher<T: Decodable>(type: T.Type, url: URL) -> AnyPublisher<T, ISNetworkError> {
+    func downloadImage(from resource: String) -> AnyPublisher<Data, ISNetworkError> {
+        guard let url = URL(string: resource) else {
+            return Fail(error: ISNetworkError.badRequest).eraseToAnyPublisher()
+        }
+        return createPublisher(url: url)
+    }
+
+    private func createPublisher(url: URL) -> AnyPublisher<Data, ISNetworkError> {
         return URLSession.shared.dataTaskPublisher(for: url)
             .tryMap { data, response in
                 guard let httpResponse = response as? HTTPURLResponse else { throw ISNetworkError.badResponse }
@@ -35,9 +45,9 @@ class NetworkManager {
                 }
                 return data
             }
-            .decode(type: type, decoder: decoder)
             .mapError { ($0 as? ISNetworkError) ?? .invalidData }
             .eraseToAnyPublisher()
+
     }
 
     private func formURL(from query: String, at page: Int, with preferences: Preferences) -> URL? {

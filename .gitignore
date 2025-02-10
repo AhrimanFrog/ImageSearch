@@ -16,4 +16,3 @@ build/
 !default.perspectivev3
 *.xccheckout
 xcuserdata/
-Config.xcconfig
