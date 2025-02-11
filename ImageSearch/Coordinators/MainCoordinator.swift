@@ -10,11 +10,12 @@ class MainCoordinator: Coordinator {
     private(set) var children: [any Coordinator] = []
     private let window: UIWindow
     private let navigatioinController = UINavigationController()
-    private let screenFactory = ScreenFactory()
+    private let screenFactory: ScreenFactory
 
     init(window: UIWindow) {
         self.window = window
         self.window.rootViewController = navigatioinController
+        screenFactory = .init(window: window)
         screenFactory.navigationHandler = self
     }
 

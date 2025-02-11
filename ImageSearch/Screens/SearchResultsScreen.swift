@@ -9,8 +9,8 @@ final class SearchResultsScreen: ISScreen<SearchResultsViewModel> {
     private let relatedCollection = ISHorizontalCollectionView()
     private let resultsCollection: ISVerticalCollectionView
 
-    override init(viewModel: SearchResultsViewModel) {
-        resultsCollection = .init(dataProvider: viewModel, layout: UICollectionViewFlowLayout())
+    init(viewModel: SearchResultsViewModel, window: UIWindow) {
+        resultsCollection = .init(dataProvider: viewModel, layout: .mediaLayout(in: window, itemsNumber: 1))
         super.init(viewModel: viewModel)
     }
 
@@ -35,9 +35,9 @@ final class SearchResultsScreen: ISScreen<SearchResultsViewModel> {
         addSubviews(header, totalResultsLabel, relatedLabel, relatedCollection, resultsCollection)
 
         header.snp.makeConstraints { make in
-            make.top.equalToSuperview().inset(70)
+            make.top.equalToSuperview()
             make.horizontalEdges.equalToSuperview()
-            make.height.equalTo(50)
+            make.height.equalTo(140)
         }
 
         totalResultsLabel.snp.makeConstraints { make in
@@ -55,7 +55,7 @@ final class SearchResultsScreen: ISScreen<SearchResultsViewModel> {
 
         relatedCollection.snp.makeConstraints { make in
             make.top.height.equalTo(relatedLabel)
-            make.leading.equalTo(relatedLabel.snp.trailing).inset(16)
+            make.leading.equalTo(relatedLabel.snp.trailing).inset(-16)
             make.trailing.equalToSuperview()
         }
 
@@ -87,7 +87,7 @@ final class SearchResultsViewModel: ViewModel {
     }
 
     func provideImage(for cell: ISMediaCell, at index: IndexPath) {
-        dependencies.networkManager.downloadImage(from: images[index.item].previewURL)
+        dependencies.networkManager.downloadImage(from: images[index.item].largeImageURL)
             .receive(on: DispatchQueue.main)
             .sink { [weak cell] image in cell?.setImage(image) }
             .store(in: &disposalBag)

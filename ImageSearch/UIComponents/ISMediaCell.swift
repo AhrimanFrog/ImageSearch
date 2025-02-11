@@ -14,6 +14,11 @@ class ISMediaCell: UICollectionViewCell, ReuseIdentifiable {
         fatalError("init(coder:) has not been implemented")
     }
 
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        imageView.image = .notFound
+    }
+
     func setImage(_ image: UIImage) {
         imageView.image = image
     }
@@ -21,6 +26,8 @@ class ISMediaCell: UICollectionViewCell, ReuseIdentifiable {
     private func configure() {
         addSubviews(imageView, shareButton)
         shareButton.setBackgroundImage(UIImage(resource: .share), for: .normal)
+        imageView.layer.cornerRadius = 5
+        imageView.clipsToBounds = true
 
         imageView.snp.makeConstraints { $0.edges.equalToSuperview() }
         shareButton.snp.makeConstraints { make in
