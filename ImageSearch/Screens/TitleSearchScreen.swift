@@ -25,7 +25,7 @@ final class TitleSearchScreen: ISScreen<TitleSearchViewModel> {
         searchButton.addAction(
             UIAction { [weak self] _ in
                 guard let text = self?.searchField.text, !text.isEmpty else { return }
-                self?.transitToResults(of: text)
+                self?.searchField.endEditing(false)
             },
             for: .touchUpInside
         )
@@ -75,6 +75,7 @@ final class TitleSearchViewModel: ViewModel {
     func transitToResults(of request: String) {
         apiSubscription = networkManager // TODO: get preferences from user defaults
             .getImages(query: request, page: 1, userPreferences: Preferences())
+            .receive(on: DispatchQueue.main)
             .sink(resultHandler: requestTransitionToResults)
     }
 }

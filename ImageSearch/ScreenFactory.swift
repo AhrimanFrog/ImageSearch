@@ -26,7 +26,7 @@ class ScreenFactory {
         }
         return TitleSearchScreen(viewModel: titleViewModel)
     }
-    
+
     private func resultsScreen(_ response: APIImagesResponse) -> SearchResultsScreen {
         let dependencies = SearchResultsViewModel.Dependencies(
             networkManager: networkManager,

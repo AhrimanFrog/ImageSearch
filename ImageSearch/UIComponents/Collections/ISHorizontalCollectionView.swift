@@ -1,9 +1,8 @@
 import UIKit
 
 class ISHorizontalCollectionView: UICollectionView {
-    
     init() {
-        var layout = UICollectionViewFlowLayout()
+        let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         layout.minimumInteritemSpacing = 8
         super.init(frame: .zero, collectionViewLayout: layout)

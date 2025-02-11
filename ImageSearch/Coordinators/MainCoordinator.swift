@@ -28,7 +28,7 @@ class MainCoordinator: Coordinator {
         case .start:
             navigatioinController.setViewControllers([screenFactory.build(screen: .start)], animated: true)
         case .results(let response):
-            navigatioinController.setViewControllers([screenFactory.build(screen: .results(response))], animated: true)
+            navigatioinController.pushViewController(screenFactory.build(screen: .results(response)), animated: true)
         default:
             fatalError("Not implemented")
         }

@@ -29,11 +29,20 @@ class NetworkManager {
             .eraseToAnyPublisher()
     }
 
-    func downloadImage(from resource: String) -> AnyPublisher<Data, ISNetworkError> {
-        guard let url = URL(string: resource) else {
-            return Fail(error: ISNetworkError.badRequest).eraseToAnyPublisher()
-        }
+    func downloadImage(from resource: String) -> AnyPublisher<UIImage, Never> {
+        let cacheKey = NSString(string: resource)
+        if let cacheImage = cache.object(forKey: cacheKey) { return Just(cacheImage).eraseToAnyPublisher() }
+        guard let url = URL(string: resource) else { return Just(UIImage.notFound).eraseToAnyPublisher() }
         return createPublisher(url: url)
+            .map { [weak self] data in
+                if let uiImage = UIImage(data: data) {
+                    self?.cache.setObject(uiImage, forKey: cacheKey)
+                    return uiImage
+                }
+                return .notFound
+            }
+            .replaceError(with: .notFound)
+            .eraseToAnyPublisher()
     }
 
     private func createPublisher(url: URL) -> AnyPublisher<Data, ISNetworkError> {
@@ -47,7 +56,6 @@ class NetworkManager {
             }
             .mapError { ($0 as? ISNetworkError) ?? .invalidData }
             .eraseToAnyPublisher()
-
     }
 
     private func formURL(from query: String, at page: Int, with preferences: Preferences) -> URL? {

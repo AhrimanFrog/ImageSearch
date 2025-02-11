@@ -3,9 +3,7 @@ import SnapKit
 import Combine
 
 final class SearchResultsScreen: ISScreen<SearchResultsViewModel> {
-    private let homeButton = UIButton()
-    private let searchField = ISSearchField()
-    private let preferencesButton = UIButton()
+    private let header = ISHeader()
     private let totalResultsLabel = UILabel()
     private let relatedLabel = UILabel()
     private let relatedCollection = ISHorizontalCollectionView()
@@ -20,23 +18,50 @@ final class SearchResultsScreen: ISScreen<SearchResultsViewModel> {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
-//        configure()
+        configure()
         setConstraints()
     }
-    
+
+    private func configure() {
+        backgroundColor = .systemGray5
+        totalResultsLabel.text = String(viewModel.totalResults)
+    }
+
     private func setConstraints() {
-        addSubviews(
-            homeButton,
-            searchField,
-            preferencesButton,
-            totalResultsLabel,
-            relatedLabel,
-            relatedCollection,
-            relatedCollection
-        )
+        addSubviews(header, totalResultsLabel, relatedLabel, relatedCollection, resultsCollection)
+
+        header.snp.makeConstraints { make in
+            make.top.verticalEdges.equalToSuperview()
+            make.height.equalTo(50)
+        }
+
+        totalResultsLabel.snp.makeConstraints { make in
+            make.horizontalEdges.equalToSuperview().inset(16)
+            make.top.equalTo(header.snp.bottom).inset(-10)
+            make.height.equalTo(22)
+        }
+
+        relatedLabel.snp.makeConstraints { make in
+            make.top.equalTo(totalResultsLabel.snp.bottom).inset(-10)
+            make.leading.equalToSuperview().inset(16)
+            make.height.equalTo(19)
+            make.width.equalTo(44)
+        }
+
+        relatedCollection.snp.makeConstraints { make in
+            make.top.height.equalTo(relatedLabel)
+            make.leading.equalTo(relatedLabel.snp.trailing).inset(16)
+            make.trailing.equalToSuperview()
+        }
+
+        resultsCollection.snp.makeConstraints { make in
+            make.bottom.equalToSuperview()
+            make.horizontalEdges.equalToSuperview().inset(16)
+            make.top.equalTo(relatedCollection.snp.bottom).inset(-10)
+        }
     }
 }
 
@@ -53,20 +78,17 @@ final class SearchResultsViewModel: ViewModel {
 
     @Published var images: [ISImage]
 
+    var totalResults: Int { dependencies.initialResults.total }
+
     init(dependencies: Dependencies) {
         self.dependencies = dependencies
         images = dependencies.initialResults.hits
     }
-    
+
     func provideImage(for cell: ISMediaCell, at index: IndexPath) {
         dependencies.networkManager.downloadImage(from: images[index.item].previewURL)
             .receive(on: DispatchQueue.main)
-            .sink { [weak cell] result in
-                switch result {
-                case .success(let data): cell?.setImage(UIImage(data: data) ?? UIImage.notFound)
-                case .failure(_): cell?.setImage(UIImage.notFound)
-                }
-            }
+            .sink { [weak cell] image in cell?.setImage(image) }
             .store(in: &disposalBag)
     }
 }
