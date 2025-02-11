@@ -61,6 +61,7 @@ struct Preferences {
     var colors: [Color] = []
     var safeSerach: Bool = false
     var order: Order = .popular
+    var itemsNumber: Int = 1
 
     private func prepareColors() -> String? {
         guard !colors.isEmpty else { return nil }

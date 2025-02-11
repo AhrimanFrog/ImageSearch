@@ -9,6 +9,7 @@ class ISVerticalCollectionView: UICollectionView {
         super.init(frame: .zero, collectionViewLayout: layout)
         register(ISMediaCell.self)
         dataSource = self
+        backgroundColor = .systemGray5
     }
 
     required init?(coder: NSCoder) {

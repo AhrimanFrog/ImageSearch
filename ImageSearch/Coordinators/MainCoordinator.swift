@@ -20,6 +20,7 @@ class MainCoordinator: Coordinator {
 
     func start() {
         navigatioinController.setViewControllers([screenFactory.build(screen: .start)], animated: false)
+        navigatioinController.setNavigationBarHidden(true, animated: false)
         window.makeKeyAndVisible()
     }
 

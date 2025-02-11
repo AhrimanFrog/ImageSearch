@@ -28,13 +28,15 @@ final class SearchResultsScreen: ISScreen<SearchResultsViewModel> {
     private func configure() {
         backgroundColor = .systemGray5
         totalResultsLabel.text = String(viewModel.totalResults)
+        relatedLabel.text = "Related"
     }
 
     private func setConstraints() {
         addSubviews(header, totalResultsLabel, relatedLabel, relatedCollection, resultsCollection)
 
         header.snp.makeConstraints { make in
-            make.top.verticalEdges.equalToSuperview()
+            make.top.equalToSuperview().inset(70)
+            make.horizontalEdges.equalToSuperview()
             make.height.equalTo(50)
         }
 
@@ -58,8 +60,7 @@ final class SearchResultsScreen: ISScreen<SearchResultsViewModel> {
         }
 
         resultsCollection.snp.makeConstraints { make in
-            make.bottom.equalToSuperview()
-            make.horizontalEdges.equalToSuperview().inset(16)
+            make.bottom.horizontalEdges.equalToSuperview()
             make.top.equalTo(relatedCollection.snp.bottom).inset(-10)
         }
     }
