@@ -79,7 +79,7 @@ final class SearchResultsViewModel: ViewModel {
     private var disposalBag = Set<AnyCancellable>()
     private var page: Int = 1
 
-    @Published var images: [ISImage]
+    var images: CurrentValueSubject<[ISImage], Never>
     @Published var related: Set<String>
 
     var totalResults: Int { dependencies.initialResults.total }
@@ -88,24 +88,26 @@ final class SearchResultsViewModel: ViewModel {
     init(dependencies: Dependencies) {
         self.dependencies = dependencies
         let hits = dependencies.initialResults.hits
-        images = hits
+        images = .init(hits)
         related = hits.reduce(into: Set<String>()) { $0.formUnion($1.formattedTags) }
     }
 
     func provideImage(for cell: ISMediaCell, at index: IndexPath) {
-        dependencies.networkManager.downloadImage(from: images[index.item].largeImageURL)
+        dependencies.networkManager.downloadImage(from: images.value[index.item].largeImageURL)
             .receive(on: DispatchQueue.main)
             .sink { [weak cell] image in cell?.setImage(image) }
             .store(in: &disposalBag)
     }
 
     func fetchMoreResults() {
-        guard images.count < totalResults else { return }
+        guard images.value.count < totalResults else { return }
         page += 1
         dependencies.networkManager.getImages(query: query, page: page, userPreferences: Preferences())
             .sink { [weak self] result in
                 switch result {
-                case .success(let response): self?.images.append(contentsOf: response.hits)
+                case .success(let response):
+                    let newImages = (self?.images.value ?? []) + response.hits
+                    self?.images.send(newImages)
                 case .failure(let error): print(error.errorDescription)
                 }
             }
