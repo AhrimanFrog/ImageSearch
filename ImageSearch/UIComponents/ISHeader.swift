@@ -16,12 +16,16 @@ class ISHeader: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    func setSearchFieldText(_ text: String) {
+        searchField.text = text
+    }
 
     private func configure() {
         backgroundColor = .systemBackground
         bottonLine.backgroundColor = .systemGray2
         homeButton.setBackgroundImage(.logo, for: .normal)
-        preferencesButton.setBackgroundImage(.logo, for: .normal)
+        preferencesButton.setBackgroundImage(.filters, for: .normal)
     }
 
     private func setConstraints() {

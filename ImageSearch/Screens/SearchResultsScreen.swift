@@ -4,13 +4,13 @@ import Combine
 
 final class SearchResultsScreen: ISScreen<SearchResultsViewModel> {
     private let header = ISHeader()
-    private let totalResultsLabel = UILabel()
-    private let relatedLabel = UILabel()
+    private let totalResultsLabel = ISInfoLabel(frame: .zero)
+    private let relatedLabel = ISCommentLabel(frame: .zero)
     private let relatedCollection = ISHorizontalCollectionView()
     private let resultsCollection: ISVerticalCollectionView
 
-    init(viewModel: SearchResultsViewModel, window: UIWindow) {
-        resultsCollection = .init(dataProvider: viewModel, layout: .mediaLayout(in: window, itemsNumber: 1))
+    override init(viewModel: SearchResultsViewModel) {
+        resultsCollection = .init(dataProvider: viewModel, layout: .mediaLayout())
         super.init(viewModel: viewModel)
     }
 
@@ -27,8 +27,9 @@ final class SearchResultsScreen: ISScreen<SearchResultsViewModel> {
 
     private func configure() {
         backgroundColor = .systemGray5
-        totalResultsLabel.text = String(viewModel.totalResults)
+        totalResultsLabel.text = "\(viewModel.totalResults) Free Images"
         relatedLabel.text = "Related"
+        header.setSearchFieldText(viewModel.query)
     }
 
     private func setConstraints() {
@@ -50,7 +51,7 @@ final class SearchResultsScreen: ISScreen<SearchResultsViewModel> {
             make.top.equalTo(totalResultsLabel.snp.bottom).inset(-10)
             make.leading.equalToSuperview().inset(16)
             make.height.equalTo(19)
-            make.width.equalTo(44)
+            make.width.equalTo(48)
         }
 
         relatedCollection.snp.makeConstraints { make in
@@ -76,20 +77,38 @@ final class SearchResultsViewModel: ViewModel {
 
     private let dependencies: Dependencies
     private var disposalBag = Set<AnyCancellable>()
+    private var page: Int = 1
 
     @Published var images: [ISImage]
+    @Published var related: Set<String>
 
     var totalResults: Int { dependencies.initialResults.total }
+    var query: String { dependencies.initialResults.query }
 
     init(dependencies: Dependencies) {
         self.dependencies = dependencies
-        images = dependencies.initialResults.hits
+        let hits = dependencies.initialResults.hits
+        images = hits
+        related = hits.reduce(into: Set<String>()) { $0.formUnion($1.formattedTags) }
     }
 
     func provideImage(for cell: ISMediaCell, at index: IndexPath) {
         dependencies.networkManager.downloadImage(from: images[index.item].largeImageURL)
             .receive(on: DispatchQueue.main)
             .sink { [weak cell] image in cell?.setImage(image) }
+            .store(in: &disposalBag)
+    }
+
+    func fetchMoreResults() {
+        guard images.count < totalResults else { return }
+        page += 1
+        dependencies.networkManager.getImages(query: query, page: page, userPreferences: Preferences())
+            .sink { [weak self] result in
+                switch result {
+                case .success(let response): self?.images.append(contentsOf: response.hits)
+                case .failure(let error): print(error.errorDescription)
+                }
+            }
             .store(in: &disposalBag)
     }
 }

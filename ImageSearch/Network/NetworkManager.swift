@@ -25,6 +25,11 @@ class NetworkManager {
         }
         return createPublisher(url: url)
             .decode(type: APIImagesResponse.self, decoder: decoder)
+            .map { response in
+                var copy = response
+                copy.query = query
+                return copy
+            }
             .mapError { ($0 as? ISNetworkError) ?? .invalidData }
             .eraseToAnyPublisher()
     }
@@ -35,11 +40,9 @@ class NetworkManager {
         guard let url = URL(string: resource) else { return Just(UIImage.notFound).eraseToAnyPublisher() }
         return createPublisher(url: url)
             .map { [weak self] data in
-                if let uiImage = UIImage(data: data) {
-                    self?.cache.setObject(uiImage, forKey: cacheKey)
-                    return uiImage
-                }
-                return .notFound
+                guard let uiImage = UIImage(data: data) else { return .notFound }
+                self?.cache.setObject(uiImage, forKey: cacheKey)
+                return uiImage
             }
             .replaceError(with: .notFound)
             .eraseToAnyPublisher()

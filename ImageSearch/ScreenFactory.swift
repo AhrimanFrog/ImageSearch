@@ -2,14 +2,9 @@ import UIKit
 
 class ScreenFactory {
     weak var navigationHandler: MainCoordinator?
-    private var window: UIWindow
 
     enum Destination {
         case start, results, photo
-    }
-
-    init(window: UIWindow) {
-        self.window = window
     }
 
     private let networkManager = NetworkManager()
@@ -39,6 +34,6 @@ class ScreenFactory {
             query: "",
             navigationHandler: {}
         )
-        return SearchResultsScreen(viewModel: SearchResultsViewModel(dependencies: dependencies), window: window)
+        return SearchResultsScreen(viewModel: SearchResultsViewModel(dependencies: dependencies))
     }
 }
