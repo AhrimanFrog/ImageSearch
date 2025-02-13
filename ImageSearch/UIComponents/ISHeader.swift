@@ -2,9 +2,9 @@ import UIKit
 import SnapKit
 
 class ISHeader: UIView {
-    private let homeButton = UIButton()
-    private let searchField = ISSearchField()
-    private let preferencesButton = UIButton()
+    let homeButton = UIButton()
+    let searchField = ISSearchField()
+    let preferencesButton = UIButton()
     private let bottonLine = UIView()
 
     init() {
@@ -15,10 +15,6 @@ class ISHeader: UIView {
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    func setSearchFieldText(_ text: String) {
-        searchField.text = text
     }
 
     private func configure() {

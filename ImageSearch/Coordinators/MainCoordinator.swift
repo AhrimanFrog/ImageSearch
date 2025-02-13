@@ -3,8 +3,8 @@ import UIKit
 class MainCoordinator: Coordinator {
     enum Destination {
         case start
-        case results(APIImagesResponse)
-        case photo
+        case results(APIImagesResponse, String)
+        case photo(ISImage, APIImagesResponse)
     }
 
     private let window: UIWindow
@@ -27,8 +27,10 @@ class MainCoordinator: Coordinator {
         switch destination {
         case .start:
             navigatioinController.setViewControllers([screenFactory.build(screen: .start)], animated: true)
-        case .results(let response):
-            navigatioinController.pushViewController(screenFactory.build(screen: .results(response)), animated: true)
+        case let .results(response, request):
+            navigatioinController.pushViewController(
+                screenFactory.build(screen: .results(response, request)), animated: true
+            )
         default:
             fatalError("Not implemented")
         }

@@ -25,11 +25,6 @@ class NetworkManager {
         }
         return createPublisher(url: url)
             .decode(type: APIImagesResponse.self, decoder: decoder)
-            .map { response in
-                var copy = response
-                copy.query = query
-                return copy
-            }
             .mapError { ($0 as? ISNetworkError) ?? .invalidData }
             .eraseToAnyPublisher()
     }

@@ -23,13 +23,18 @@ final class SearchResultsScreen: ISScreen<SearchResultsViewModel> {
         super.viewDidLoad()
         configure()
         setConstraints()
+        bindNavigation()
     }
 
     private func configure() {
         backgroundColor = .systemGray5
         totalResultsLabel.text = "\(viewModel.totalResults) Free Images"
         relatedLabel.text = "Related"
-        header.setSearchFieldText(viewModel.query)
+        header.searchField.text = viewModel.query
+    }
+
+    private func bindNavigation() {
+        header.homeButton.addAction(UIAction { [weak self] _ in self?.viewModel.goTo(.start) }, for: .touchUpInside)
     }
 
     private func setConstraints() {
@@ -72,7 +77,7 @@ final class SearchResultsViewModel: ViewModel {
         let networkManager: NetworkManager
         let initialResults: APIImagesResponse
         let query: String
-        let navigationHandler: () -> Void
+        let navigationHandler: (MainCoordinator.Destination) -> Void
     }
 
     private let dependencies: Dependencies
@@ -83,7 +88,8 @@ final class SearchResultsViewModel: ViewModel {
     private(set) var related: CurrentValueSubject<Set<String>, Never>
 
     var totalResults: Int { dependencies.initialResults.total }
-    var query: String { dependencies.initialResults.query }
+    var query: String { dependencies.query }
+    var goTo: (MainCoordinator.Destination) -> Void { dependencies.navigationHandler }
 
     init(dependencies: Dependencies) {
         self.dependencies = dependencies

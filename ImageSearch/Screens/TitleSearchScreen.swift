@@ -61,12 +61,12 @@ final class TitleSearchScreen: ISScreen<TitleSearchViewModel> {
 
 final class TitleSearchViewModel: ViewModel {
     private let networkManager: NetworkManager
-    private let requestTransitionToResults: (Result<APIImagesResponse, ISNetworkError>) -> Void
+    private let requestTransitionToResults: (Result<(APIImagesResponse, String), ISNetworkError>) -> Void
     private var apiSubscription: AnyCancellable?
 
     init(
         networkManager: NetworkManager,
-        coordinatorNotifier: @escaping (Result<APIImagesResponse, ISNetworkError>) -> Void
+        coordinatorNotifier: @escaping (Result<(APIImagesResponse, String), ISNetworkError>) -> Void
     ) {
         self.networkManager = networkManager
         requestTransitionToResults = coordinatorNotifier
@@ -76,6 +76,11 @@ final class TitleSearchViewModel: ViewModel {
         apiSubscription = networkManager // TODO: get preferences from user defaults
             .getImages(query: request, page: 1, userPreferences: Preferences())
             .receive(on: DispatchQueue.main)
-            .sink(resultHandler: requestTransitionToResults)
+            .sink { [weak self] result in
+                switch result {
+                case .success(let respponse): self?.requestTransitionToResults(.success((respponse, request)))
+                case .failure(let error): self?.requestTransitionToResults(.failure(error))
+                }
+            }
     }
 }
