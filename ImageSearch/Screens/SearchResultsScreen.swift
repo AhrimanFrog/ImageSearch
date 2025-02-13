@@ -79,8 +79,8 @@ final class SearchResultsViewModel: ViewModel {
     private var disposalBag = Set<AnyCancellable>()
     private var page: Int = 1
 
-    var images: CurrentValueSubject<[ISImage], Never>
-    @Published var related: Set<String>
+    private(set) var images: CurrentValueSubject<[ISImage], Never>
+    private(set) var related: CurrentValueSubject<Set<String>, Never>
 
     var totalResults: Int { dependencies.initialResults.total }
     var query: String { dependencies.initialResults.query }
@@ -89,7 +89,7 @@ final class SearchResultsViewModel: ViewModel {
         self.dependencies = dependencies
         let hits = dependencies.initialResults.hits
         images = .init(hits)
-        related = hits.reduce(into: Set<String>()) { $0.formUnion($1.formattedTags) }
+        related = .init(hits.reduce(into: Set<String>()) { $0.formUnion($1.formattedTags) })
     }
 
     func provideImage(for cell: ISMediaCell, at index: IndexPath) {

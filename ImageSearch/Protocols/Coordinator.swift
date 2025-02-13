@@ -1,5 +1,6 @@
 protocol Coordinator {
-    var children: [any Coordinator] { get }
-
+    associatedtype NavigationDestination
     func start()
+    func navigate(to: NavigationDestination)
+    func handleError(with: String)
 }

@@ -2,37 +2,49 @@ import UIKit
 import Combine
 
 class ISVerticalCollectionView: UICollectionView {
-    private let dataProvider: SearchResultsViewModel // TODO: swap for protocol
+    private var dataProvider: SearchResultsViewModel
+    private var diffDataSource: UICollectionViewDiffableDataSource<String, ISImage>?
+    private var dataSubscription: AnyCancellable?
 
     init(dataProvider: SearchResultsViewModel, layout: UICollectionViewLayout) {
         self.dataProvider = dataProvider
         super.init(frame: .zero, collectionViewLayout: layout)
-        register(ISMediaCell.self)
-        dataSource = self
-        delegate = self
         backgroundColor = .systemGray5
+
+        register(ISMediaCell.self)
+        configureDataSource(with: dataProvider)
+        delegate = self
+        dataSubscription = dataProvider.images.sink { [weak self] in self?.updateUI(with: $0) }
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-}
 
-extension ISVerticalCollectionView: UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return dataProvider.images.count
+    private func configureDataSource(with viewModel: SearchResultsViewModel) {
+        diffDataSource = .init(collectionView: self) { [weak viewModel] collection, indexPath, _ in
+            return collection.deque(ISMediaCell.self, for: indexPath) { cell in
+                viewModel?.provideImage(for: cell, at: indexPath)
+            }
+        }
     }
 
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        return collectionView.deque(ISMediaCell.self, for: indexPath) { [weak dataProvider] cell in
-            dataProvider?.provideImage(for: cell, at: indexPath)
-        }
+    private func updateUI(with images: [ISImage]) {
+        var snapshot = NSDiffableDataSourceSnapshot<String, ISImage>()
+        snapshot.appendSections(["main"])
+        snapshot.appendItems(images, toSection: "main")
+        DispatchQueue.main.async { self.diffDataSource?.apply(snapshot) }
     }
 }
 
 extension ISVerticalCollectionView: UICollectionViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        print()
+        let offsetY = scrollView.contentOffset.y
+        let contentHeight = scrollView.contentSize.height
+        let viewHeight = scrollView.frame.size.height
+
+        guard offsetY > (contentHeight - viewHeight) else { return }
+        dataProvider.fetchMoreResults()
     }
 }
 

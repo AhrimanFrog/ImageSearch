@@ -48,7 +48,7 @@ class NetworkManager {
             .eraseToAnyPublisher()
     }
 
-    private func createPublisher(url: URL) -> AnyPublisher<Data, ISNetworkError> {
+    private func createPublisher(url: URL) -> AnyPublisher<Data, Error> {
         return URLSession.shared.dataTaskPublisher(for: url)
             .tryMap { data, response in
                 guard let httpResponse = response as? HTTPURLResponse else { throw ISNetworkError.badResponse }
@@ -57,7 +57,6 @@ class NetworkManager {
                 }
                 return data
             }
-            .mapError { ($0 as? ISNetworkError) ?? .invalidData }
             .eraseToAnyPublisher()
     }
 

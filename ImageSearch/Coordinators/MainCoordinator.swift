@@ -7,7 +7,6 @@ class MainCoordinator: Coordinator {
         case photo
     }
 
-    private(set) var children: [any Coordinator] = []
     private let window: UIWindow
     private let navigatioinController = UINavigationController()
     private let screenFactory = ScreenFactory()

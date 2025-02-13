@@ -31,7 +31,7 @@ class ISSuggestionCell: UICollectionViewCell, ReuseIdentifiable {
         addSubview(textLabel)
         textLabel.font = .openSans(ofSize: 14, style: .light)
         textLabel.textAlignment = .center
-        
+
         textLabel.snp.makeConstraints { $0.edges.equalToSuperview() }
     }
 }

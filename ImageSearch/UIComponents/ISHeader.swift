@@ -16,7 +16,7 @@ class ISHeader: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     func setSearchFieldText(_ text: String) {
         searchField.text = text
     }

@@ -15,4 +15,3 @@ class ISHorizontalCollectionView: UICollectionView {
         fatalError("init(coder:) has not been implemented")
     }
 }
-

@@ -1,4 +1,4 @@
-struct ISImage: Codable {
+struct ISImage: Codable, Hashable {
     let id: Int
     let tags: String
     let previewURL: String
