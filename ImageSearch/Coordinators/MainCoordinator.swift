@@ -8,27 +8,28 @@ class MainCoordinator: Coordinator {
     }
 
     private let window: UIWindow
-    private let navigatioinController = UINavigationController()
-    private let screenFactory = ScreenFactory()
+    private let navigationController: UINavigationController
+    private let screenFactory: ScreenFactory
 
     init(window: UIWindow) {
+        screenFactory = ScreenFactory()
+        navigationController = .init(rootViewController: screenFactory.build(screen: .start))
         self.window = window
-        self.window.rootViewController = navigatioinController
+        self.window.rootViewController = navigationController
         screenFactory.navigationHandler = self
     }
 
     func start() {
-        navigatioinController.setViewControllers([screenFactory.build(screen: .start)], animated: false)
-        navigatioinController.setNavigationBarHidden(true, animated: false)
+        navigationController.setNavigationBarHidden(true, animated: false)
         window.makeKeyAndVisible()
     }
 
     func navigate(to destination: Destination) {
         switch destination {
         case .start:
-            navigatioinController.setViewControllers([screenFactory.build(screen: .start)], animated: true)
+            navigationController.popToRootViewController(animated: true)
         case let .results(response, request):
-            navigatioinController.pushViewController(
+            navigationController.pushViewController(
                 screenFactory.build(screen: .results(response, request)), animated: true
             )
         default:
@@ -39,6 +40,6 @@ class MainCoordinator: Coordinator {
     func handleError(with text: String) {
         let alert = UIAlertController(title: "Oops!", message: text, preferredStyle: .alert)
         alert.addAction(.init(title: "OK", style: .default))
-        navigatioinController.present(alert, animated: true)
+        navigationController.present(alert, animated: true)
     }
 }
