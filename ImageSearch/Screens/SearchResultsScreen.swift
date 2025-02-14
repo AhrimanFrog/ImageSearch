@@ -6,11 +6,12 @@ final class SearchResultsScreen: ISScreen<SearchResultsViewModel> {
     private let header = ISHeader()
     private let totalResultsLabel = ISInfoLabel(frame: .zero)
     private let relatedLabel = ISCommentLabel(frame: .zero)
-    private let relatedCollection = ISHorizontalCollectionView()
+    private let relatedCollection: ISHorizontalCollectionView
     private let resultsCollection: ISVerticalCollectionView
 
     override init(viewModel: SearchResultsViewModel) {
         resultsCollection = .init(dataProvider: viewModel, layout: .mediaLayout())
+        relatedCollection = .init(viewModel: viewModel)
         super.init(viewModel: viewModel)
     }
 
@@ -35,6 +36,7 @@ final class SearchResultsScreen: ISScreen<SearchResultsViewModel> {
 
     private func bindNavigation() {
         header.homeButton.addAction(UIAction { [weak self] _ in self?.viewModel.goTo(.start) }, for: .touchUpInside)
+        header.searchField.addInputProcessor { [weak self] input in self?.viewModel.transitToResults(of: input) }
     }
 
     private func setConstraints() {
@@ -55,7 +57,7 @@ final class SearchResultsScreen: ISScreen<SearchResultsViewModel> {
         relatedLabel.snp.makeConstraints { make in
             make.top.equalTo(totalResultsLabel.snp.bottom).inset(-10)
             make.leading.equalToSuperview().inset(16)
-            make.height.equalTo(19)
+            make.height.equalTo(32)
             make.width.equalTo(48)
         }
 
@@ -84,8 +86,8 @@ final class SearchResultsViewModel: ViewModel {
     private var disposalBag = Set<AnyCancellable>()
     private var page: Int = 1
 
-    private(set) var images: CurrentValueSubject<[ISImage], Never>
-    private(set) var related: CurrentValueSubject<Set<String>, Never>
+    let images: CurrentValueSubject<[ISImage], Never>
+    let related: CurrentValueSubject<Set<String>, Never>
 
     var totalResults: Int { dependencies.initialResults.total }
     var query: String { dependencies.query }
@@ -95,7 +97,7 @@ final class SearchResultsViewModel: ViewModel {
         self.dependencies = dependencies
         let hits = dependencies.initialResults.hits
         images = .init(hits)
-        related = .init(hits.reduce(into: Set<String>()) { $0.formUnion($1.formattedTags) })
+        related = .init(SearchResultsViewModel.gatherTagsFromMedia(hits))
     }
 
     func provideImage(for cell: ISMediaCell, at index: IndexPath) {
@@ -114,9 +116,27 @@ final class SearchResultsViewModel: ViewModel {
                 case .success(let response):
                     let newImages = (self?.images.value ?? []) + response.hits
                     self?.images.send(newImages)
+                    self?.related.send(SearchResultsViewModel.gatherTagsFromMedia(newImages))
                 case .failure(let error): print(error.errorDescription)
                 }
             }
             .store(in: &disposalBag)
+    }
+
+    func transitToResults(of request: String) {
+        dependencies.networkManager // TODO: get preferences from user defaults
+            .getImages(query: request, page: 1, userPreferences: Preferences())
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] result in
+                switch result {
+                case .success(let respponse): self?.goTo(.results(respponse, request))
+                case .failure(let error): print(error.errorDescription)
+                }
+            }
+            .store(in: &disposalBag)
+    }
+
+    private static func gatherTagsFromMedia(_ media: [ISImage]) -> Set<String> {
+        return media.reduce(into: Set<String>()) { $0.formUnion($1.formattedTags) }
     }
 }

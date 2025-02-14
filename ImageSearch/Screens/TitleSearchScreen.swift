@@ -15,13 +15,8 @@ final class TitleSearchScreen: ISScreen<TitleSearchViewModel> {
         setConstraints()
     }
 
-    private func transitToResults(of input: String) {
-        // TODO: show loading view
-        viewModel.transitToResults(of: input)
-    }
-
     private func bind() {
-        searchField.addInputProcessor { [weak self] input in self?.transitToResults(of: input) }
+        searchField.addInputProcessor { [weak self] input in self?.viewModel.transitToResults(of: input) }
         searchButton.addAction(
             UIAction { [weak self] _ in
                 guard let text = self?.searchField.text, !text.isEmpty else { return }

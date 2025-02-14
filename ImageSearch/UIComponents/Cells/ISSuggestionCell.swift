@@ -4,6 +4,8 @@ import SnapKit
 class ISSuggestionCell: UICollectionViewCell, ReuseIdentifiable {
     private let textLabel = UILabel()
 
+    var text: String { textLabel.text ?? "" }
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         configure()
@@ -29,9 +31,9 @@ class ISSuggestionCell: UICollectionViewCell, ReuseIdentifiable {
         updateCellColors()
 
         addSubview(textLabel)
-        textLabel.font = .openSans(ofSize: 14, style: .light)
+        textLabel.font = .openSans(ofSize: 14)
         textLabel.textAlignment = .center
 
-        textLabel.snp.makeConstraints { $0.edges.equalToSuperview() }
+        textLabel.snp.makeConstraints { $0.edges.equalToSuperview().inset(5) }
     }
 }
