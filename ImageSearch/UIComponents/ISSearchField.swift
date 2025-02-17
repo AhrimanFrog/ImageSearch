@@ -1,7 +1,7 @@
 import UIKit
 
 class ISSearchField: UITextField {
-    private let padding = UIEdgeInsets(top: 0, left: 5, bottom: 0, right: 5)
+    private let padding = UIEdgeInsets(top: 0, left: 25, bottom: 0, right: 5)
 
     init() {
         super.init(frame: .zero)
@@ -32,6 +32,10 @@ class ISSearchField: UITextField {
         placeholder = "Search images, vectors and more"
         layer.backgroundColor = UIColor(red: 0.887, green: 0.887, blue: 0.887, alpha: 1).cgColor
         layer.cornerRadius = 8
+        leftViewMode = .always
+        let imageView = UIImageView(image: UIImage(sfImage: .search))
+        imageView.tintColor = .systemGray
+        leftView = imageView
     }
 }
 

@@ -22,9 +22,9 @@ class ISVerticalCollectionView: UICollectionView {
     }
 
     private func configureDataSource(with viewModel: SearchResultsViewModel) {
-        diffDataSource = .init(collectionView: self) { [weak viewModel] collection, indexPath, _ in
+        diffDataSource = .init(collectionView: self) { [weak viewModel] collection, indexPath, image in
             return collection.deque(ISMediaCell.self, for: indexPath) { cell in
-                viewModel?.provideImage(for: cell, at: indexPath)
+                cell.subscribe(to: viewModel?.imagePublisher(for: image))
             }
         }
     }

@@ -87,7 +87,7 @@ final class SearchResultsViewModel: ViewModel {
     private var page: Int = 1
 
     let images: CurrentValueSubject<[ISImage], Never>
-    let related: CurrentValueSubject<Set<String>, Never>
+    let related: CurrentValueSubject<[String], Never>
 
     var totalResults: Int { dependencies.initialResults.total }
     var query: String { dependencies.query }
@@ -100,11 +100,8 @@ final class SearchResultsViewModel: ViewModel {
         related = .init(SearchResultsViewModel.gatherTagsFromMedia(hits))
     }
 
-    func provideImage(for cell: ISMediaCell, at index: IndexPath) {
-        dependencies.networkManager.downloadImage(from: images.value[index.item].largeImageURL)
-            .receive(on: DispatchQueue.main)
-            .sink { [weak cell] image in cell?.setImage(image) }
-            .store(in: &disposalBag)
+    func imagePublisher(for model: ISImage) -> AnyPublisher<UIImage, Never> {
+        return dependencies.networkManager.downloadImage(from: model.largeImageURL)
     }
 
     func fetchMoreResults() {
@@ -114,9 +111,7 @@ final class SearchResultsViewModel: ViewModel {
             .sink { [weak self] result in
                 switch result {
                 case .success(let response):
-                    let newImages = (self?.images.value ?? []) + response.hits
-                    self?.images.send(newImages)
-                    self?.related.send(SearchResultsViewModel.gatherTagsFromMedia(newImages))
+                    self?.images.value.append(contentsOf: response.hits)
                 case .failure(let error): print(error.errorDescription)
                 }
             }
@@ -136,7 +131,7 @@ final class SearchResultsViewModel: ViewModel {
             .store(in: &disposalBag)
     }
 
-    private static func gatherTagsFromMedia(_ media: [ISImage]) -> Set<String> {
-        return media.reduce(into: Set<String>()) { $0.formUnion($1.formattedTags) }
+    private static func gatherTagsFromMedia(_ media: [ISImage]) -> [String] {
+        return Array(media.map { $0.formattedTags.unique }.joined())
     }
 }

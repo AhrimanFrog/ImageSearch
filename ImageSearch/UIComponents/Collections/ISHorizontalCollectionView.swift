@@ -33,10 +33,10 @@ class ISHorizontalCollectionView: UICollectionView {
         }
     }
 
-    private func applySnapshot(of data: Set<String>) {
+    private func applySnapshot(of data: [String]) {
         var snapshot = NSDiffableDataSourceSnapshot<String, String>()
         snapshot.appendSections(["main"])
-        snapshot.appendItems(Array(data))
+        snapshot.appendItems(data)
         DispatchQueue.main.async { self.dataProvider?.apply(snapshot) }
     }
 }

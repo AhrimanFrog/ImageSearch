@@ -1,9 +1,12 @@
 import UIKit
 import SnapKit
+import Combine
 
 class ISMediaCell: UICollectionViewCell, ReuseIdentifiable {
     private let imageView = UIImageView()
     private let shareButton = UIButton()
+
+    private var imageSubscription: AnyCancellable?
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -16,11 +19,14 @@ class ISMediaCell: UICollectionViewCell, ReuseIdentifiable {
 
     override func prepareForReuse() {
         super.prepareForReuse()
+        imageSubscription?.cancel()
         imageView.image = .notFound
     }
 
-    func setImage(_ image: UIImage) {
-        imageView.image = image
+    func subscribe(to publisher: AnyPublisher<UIImage, Never>?) {
+        imageSubscription = publisher?
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in self?.imageView.image = $0 }
     }
 
     private func configure() {
