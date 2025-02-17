@@ -4,5 +4,7 @@ struct ISImage: Codable, Hashable {
     let previewURL: String
     let largeImageURL: String
 
-    var formattedTags: [String] { tags.split(separator: ",").map { String($0) } }
+    var formattedTags: [String] {
+        tags.split(separator: ",").map { String($0).trimmingCharacters(in: .whitespacesAndNewlines) }
+    }
 }

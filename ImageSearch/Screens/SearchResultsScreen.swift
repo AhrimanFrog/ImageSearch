@@ -132,6 +132,6 @@ final class SearchResultsViewModel: ViewModel {
     }
 
     private static func gatherTagsFromMedia(_ media: [ISImage]) -> [String] {
-        return Array(media.map { $0.formattedTags.unique }.joined())
+        return Array(media.map { $0.formattedTags }.joined()).unique
     }
 }
