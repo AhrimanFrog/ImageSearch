@@ -1,7 +1,7 @@
 import UIKit
 
 class ISSearchField: UITextField {
-    private let padding = UIEdgeInsets(top: 0, left: 25, bottom: 0, right: 5)
+    private let padding = UIEdgeInsets(top: 0, left: 45, bottom: 0, right: 5)
 
     init() {
         super.init(frame: .zero)
@@ -18,6 +18,12 @@ class ISSearchField: UITextField {
 
     override func textRect(forBounds bounds: CGRect) -> CGRect {
         return bounds.inset(by: padding)
+    }
+
+    override func leftViewRect(forBounds bounds: CGRect) -> CGRect {
+        var leftViewRect = super.leftViewRect(forBounds: bounds)
+        leftViewRect.origin.x += 15
+        return leftViewRect
     }
 
     required init?(coder: NSCoder) {

@@ -46,6 +46,10 @@ extension ISVerticalCollectionView: UICollectionViewDelegate {
         guard offsetY > (contentHeight - viewHeight) else { return }
         dataProvider.fetchMoreResults()
     }
+
+    func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        dataProvider.openPhotoScreen(path: indexPath)
+    }
 }
 
 extension ISVerticalCollectionView: UICollectionViewDelegateFlowLayout {

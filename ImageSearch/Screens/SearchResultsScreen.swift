@@ -11,7 +11,7 @@ final class SearchResultsScreen: ISScreen<SearchResultsViewModel> {
 
     override init(viewModel: SearchResultsViewModel) {
         resultsCollection = .init(dataProvider: viewModel, layout: .mediaLayout())
-        relatedCollection = .init(data: viewModel.related)
+        relatedCollection = .init(viewModel: viewModel)
         super.init(viewModel: viewModel)
     }
 
@@ -36,7 +36,7 @@ final class SearchResultsScreen: ISScreen<SearchResultsViewModel> {
 
     private func bindNavigation() {
         header.homeButton.addAction(UIAction { [weak self] _ in self?.viewModel.goTo(.start) }, for: .touchUpInside)
-        header.searchField.addInputProcessor { [weak self] input in self?.viewModel.transitToResults(of: input) }
+        header.searchField.addInputProcessor { [weak self] input in self?.viewModel.displayResults(of: input) }
     }
 
     private func setConstraints() {
@@ -110,15 +110,14 @@ final class SearchResultsViewModel: ViewModel {
         dependencies.networkManager.getImages(query: query, page: page, userPreferences: Preferences())
             .sink { [weak self] result in
                 switch result {
-                case .success(let response):
-                    self?.images.value.append(contentsOf: response.hits)
+                case .success(let response): self?.images.value.append(contentsOf: response.hits)
                 case .failure(let error): print(error.errorDescription)
                 }
             }
             .store(in: &disposalBag)
     }
 
-    func transitToResults(of request: String) {
+    func displayResults(of request: String) {
         dependencies.networkManager // TODO: get preferences from user defaults
             .getImages(query: request, page: 1, userPreferences: Preferences())
             .receive(on: DispatchQueue.main)
@@ -129,6 +128,10 @@ final class SearchResultsViewModel: ViewModel {
                 }
             }
             .store(in: &disposalBag)
+    }
+
+    func openPhotoScreen(path: IndexPath) {
+        goTo(.photo(images.value[path.item], dependencies.initialResults))
     }
 
     private static func gatherTagsFromMedia(_ media: [ISImage]) -> [String] {

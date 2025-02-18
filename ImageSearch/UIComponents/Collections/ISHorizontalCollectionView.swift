@@ -1,12 +1,11 @@
 import UIKit
-import Combine
 
 class ISHorizontalCollectionView: UICollectionView {
     private let viewModel: SearchResultsViewModel
     private var dataProvider: UICollectionViewDiffableDataSource<String, String>?
-    private var dataSubscription: AnyCancellable?
 
-    init(data: [String]) {
+    init(viewModel: SearchResultsViewModel) {
+        self.viewModel = viewModel
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         layout.minimumInteritemSpacing = 8
@@ -17,7 +16,7 @@ class ISHorizontalCollectionView: UICollectionView {
         delegate = self
         register(ISSuggestionCell.self)
         configureDataProvider()
-        applySnapshot(of: data)
+        applySnapshot(of: viewModel.related)
     }
 
     required init?(coder: NSCoder) {
@@ -26,9 +25,7 @@ class ISHorizontalCollectionView: UICollectionView {
 
     private func configureDataProvider() {
         dataProvider = .init(collectionView: self) { collectionView, indexPath, text in
-            return collectionView.deque(ISSuggestionCell.self, for: indexPath) { cell in
-                cell.setText(text)
-            }
+            return collectionView.deque(ISSuggestionCell.self, for: indexPath) { $0.setText(text) }
         }
     }
 
@@ -43,6 +40,6 @@ class ISHorizontalCollectionView: UICollectionView {
 extension ISHorizontalCollectionView: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let cell = collectionView.cellForItem(at: indexPath) as? ISSuggestionCell else { return }
-        viewModel.transitToResults(of: cell.text)
+        viewModel.displayResults(of: cell.text)
     }
 }
