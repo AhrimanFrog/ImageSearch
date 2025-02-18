@@ -11,7 +11,7 @@ final class SearchResultsScreen: ISScreen<SearchResultsViewModel> {
 
     override init(viewModel: SearchResultsViewModel) {
         resultsCollection = .init(dataProvider: viewModel, layout: .mediaLayout())
-        relatedCollection = .init(viewModel: viewModel)
+        relatedCollection = .init(data: viewModel.related)
         super.init(viewModel: viewModel)
     }
 
@@ -77,8 +77,8 @@ final class SearchResultsScreen: ISScreen<SearchResultsViewModel> {
 final class SearchResultsViewModel: ViewModel {
     struct Dependencies {
         let networkManager: NetworkManager
-        let initialResults: APIImagesResponse
-        let query: String
+        var initialResults: APIImagesResponse
+        var query: String
         let navigationHandler: (MainCoordinator.Destination) -> Void
     }
 
@@ -87,7 +87,7 @@ final class SearchResultsViewModel: ViewModel {
     private var page: Int = 1
 
     let images: CurrentValueSubject<[ISImage], Never>
-    let related: CurrentValueSubject<[String], Never>
+    let related: [String]
 
     var totalResults: Int { dependencies.initialResults.total }
     var query: String { dependencies.query }
@@ -132,6 +132,7 @@ final class SearchResultsViewModel: ViewModel {
     }
 
     private static func gatherTagsFromMedia(_ media: [ISImage]) -> [String] {
-        return Array(media.map { $0.formattedTags }.joined()).unique
+        let joinedTags = media.reduce(into: []) { $0.append(contentsOf: $1.formattedTags) }.unique
+        return joinedTags.count > 8 ? Array(joinedTags[..<8]) : joinedTags
     }
 }

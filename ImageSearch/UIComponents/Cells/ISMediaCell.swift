@@ -34,6 +34,7 @@ class ISMediaCell: UICollectionViewCell, ReuseIdentifiable {
         shareButton.setBackgroundImage(UIImage(resource: .share), for: .normal)
         imageView.layer.cornerRadius = 5
         imageView.clipsToBounds = true
+        imageView.contentMode = .scaleAspectFit
 
         imageView.snp.makeConstraints { $0.edges.equalToSuperview() }
         shareButton.snp.makeConstraints { make in

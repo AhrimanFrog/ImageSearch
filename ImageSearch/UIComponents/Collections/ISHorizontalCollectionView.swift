@@ -6,8 +6,7 @@ class ISHorizontalCollectionView: UICollectionView {
     private var dataProvider: UICollectionViewDiffableDataSource<String, String>?
     private var dataSubscription: AnyCancellable?
 
-    init(viewModel: SearchResultsViewModel) {
-        self.viewModel = viewModel
+    init(data: [String]) {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         layout.minimumInteritemSpacing = 8
@@ -18,7 +17,7 @@ class ISHorizontalCollectionView: UICollectionView {
         delegate = self
         register(ISSuggestionCell.self)
         configureDataProvider()
-        dataSubscription = viewModel.related.sink { [weak self] in self?.applySnapshot(of: $0) }
+        applySnapshot(of: data)
     }
 
     required init?(coder: NSCoder) {
