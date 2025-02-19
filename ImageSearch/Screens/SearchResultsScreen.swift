@@ -75,6 +75,8 @@ final class SearchResultsScreen: ISScreen<SearchResultsViewModel> {
 }
 
 final class SearchResultsViewModel: ViewModel {
+    private static let maximumTags = 8
+    
     struct Dependencies {
         let networkManager: NetworkManager
         var initialResults: APIImagesResponse
@@ -136,6 +138,6 @@ final class SearchResultsViewModel: ViewModel {
 
     private static func gatherTagsFromMedia(_ media: [ISImage]) -> [String] {
         let joinedTags = media.reduce(into: []) { $0.append(contentsOf: $1.formattedTags) }.unique
-        return joinedTags.count > 8 ? Array(joinedTags[..<8]) : joinedTags
+        return Array(joinedTags.prefix(maximumTags))
     }
 }
