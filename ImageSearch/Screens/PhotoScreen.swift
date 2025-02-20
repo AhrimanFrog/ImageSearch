@@ -16,5 +16,4 @@ class PhotoScreen: ISScreen<PhotoScreenViewModel> {
 
 
 class PhotoScreenViewModel: ViewModel {
-    
 }

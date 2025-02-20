@@ -1,8 +1,10 @@
 import UIKit
+import Combine
 
 class ISHorizontalCollectionView: UICollectionView {
     private let viewModel: SearchResultsViewModel
     private var dataProvider: UICollectionViewDiffableDataSource<String, String>?
+    private var dataSubscription: AnyCancellable?
 
     init(viewModel: SearchResultsViewModel) {
         self.viewModel = viewModel
@@ -16,7 +18,7 @@ class ISHorizontalCollectionView: UICollectionView {
         delegate = self
         register(ISSuggestionCell.self)
         configureDataProvider()
-        applySnapshot(of: viewModel.related)
+        dataSubscription = viewModel.related.sink { [weak self] newValues in self?.applySnapshot(of: newValues) }
     }
 
     required init?(coder: NSCoder) {

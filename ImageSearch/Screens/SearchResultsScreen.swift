@@ -9,6 +9,8 @@ final class SearchResultsScreen: ISScreen<SearchResultsViewModel> {
     private let relatedCollection: ISHorizontalCollectionView
     private let resultsCollection: ISVerticalCollectionView
 
+    private var disposalBag = Set<AnyCancellable>()
+
     override init(viewModel: SearchResultsViewModel) {
         resultsCollection = .init(dataProvider: viewModel, layout: .mediaLayout())
         relatedCollection = .init(viewModel: viewModel)
@@ -25,11 +27,12 @@ final class SearchResultsScreen: ISScreen<SearchResultsViewModel> {
         configure()
         setConstraints()
         bindNavigation()
+        bindViewModel()
     }
 
     private func configure() {
         backgroundColor = .systemGray5
-        totalResultsLabel.text = "\(viewModel.totalResults) Free Images"
+        totalResultsLabel.text = "\(viewModel.total.value) Free Images"
         relatedLabel.text = "Related"
         header.searchField.text = viewModel.query
     }
@@ -37,6 +40,12 @@ final class SearchResultsScreen: ISScreen<SearchResultsViewModel> {
     private func bindNavigation() {
         header.homeButton.addAction(UIAction { [weak self] _ in self?.viewModel.goTo(.start) }, for: .touchUpInside)
         header.searchField.addInputProcessor { [weak self] input in self?.viewModel.displayResults(of: input) }
+    }
+
+    private func bindViewModel() {
+        viewModel.total
+            .sink { [weak self] newTotal in self?.totalResultsLabel.text = "\(newTotal) Free Images" }
+            .store(in: &disposalBag)
     }
 
     private func setConstraints() {
@@ -76,22 +85,22 @@ final class SearchResultsScreen: ISScreen<SearchResultsViewModel> {
 
 final class SearchResultsViewModel: ViewModel {
     private static let maximumTags = 8
-    
+
     struct Dependencies {
         let networkManager: NetworkManager
-        var initialResults: APIImagesResponse
+        let initialResults: APIImagesResponse
         var query: String
         let navigationHandler: (MainCoordinator.Destination) -> Void
     }
 
-    private let dependencies: Dependencies
+    private var dependencies: Dependencies
     private var disposalBag = Set<AnyCancellable>()
     private var page: Int = 1
 
+    let total: CurrentValueSubject<Int, Never>
     let images: CurrentValueSubject<[ISImage], Never>
-    let related: [String]
+    let related: CurrentValueSubject<[String], Never>
 
-    var totalResults: Int { dependencies.initialResults.total }
     var query: String { dependencies.query }
     var goTo: (MainCoordinator.Destination) -> Void { dependencies.navigationHandler }
 
@@ -100,6 +109,7 @@ final class SearchResultsViewModel: ViewModel {
         let hits = dependencies.initialResults.hits
         images = .init(hits)
         related = .init(SearchResultsViewModel.gatherTagsFromMedia(hits))
+        total = .init(dependencies.initialResults.total)
     }
 
     func imagePublisher(for model: ISImage) -> AnyPublisher<UIImage, Never> {
@@ -107,7 +117,7 @@ final class SearchResultsViewModel: ViewModel {
     }
 
     func fetchMoreResults() {
-        guard images.value.count < totalResults else { return }
+        guard images.value.count < total.value else { return }
         page += 1
         dependencies.networkManager.getImages(query: query, page: page, userPreferences: Preferences())
             .sink { [weak self] result in
@@ -125,7 +135,7 @@ final class SearchResultsViewModel: ViewModel {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] result in
                 switch result {
-                case .success(let respponse): self?.goTo(.results(respponse, request))
+                case .success(let respponse): self?.updateScreen(response: respponse, request: request)
                 case .failure(let error): print(error.errorDescription)
                 }
             }
@@ -134,6 +144,14 @@ final class SearchResultsViewModel: ViewModel {
 
     func openPhotoScreen(path: IndexPath) {
         goTo(.photo(images.value[path.item], dependencies.initialResults))
+    }
+
+    private func updateScreen(response: APIImagesResponse, request: String) {
+        images.send(response.hits)
+        related.send(SearchResultsViewModel.gatherTagsFromMedia(response.hits))
+        total.send(response.total)
+        dependencies.query = request
+        page = 1
     }
 
     private static func gatherTagsFromMedia(_ media: [ISImage]) -> [String] {

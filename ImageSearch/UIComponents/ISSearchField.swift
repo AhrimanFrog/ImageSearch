@@ -6,6 +6,7 @@ class ISSearchField: UITextField {
     init() {
         super.init(frame: .zero)
         configure()
+        addDoneButton()
     }
 
     override func editingRect(forBounds bounds: CGRect) -> CGRect {
@@ -42,6 +43,15 @@ class ISSearchField: UITextField {
         let imageView = UIImageView(image: UIImage(sfImage: .search))
         imageView.tintColor = .systemGray
         leftView = imageView
+    }
+
+    private func addDoneButton() {
+        let doneButton = UIBarButtonItem(
+            systemItem: .done, primaryAction: UIAction { [weak self] _ in self?.resignFirstResponder() }
+        )
+        let toolbar = UIToolbar(frame: .init(x: 0, y: 0, width: 100, height: 50))
+        toolbar.items = [doneButton]
+        inputAccessoryView = toolbar
     }
 }
 
