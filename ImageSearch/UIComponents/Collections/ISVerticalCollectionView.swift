@@ -2,11 +2,11 @@ import UIKit
 import Combine
 
 class ISVerticalCollectionView: UICollectionView {
-    private var dataProvider: SearchResultsViewModel
+    private var dataProvider: DataProvider
     private var diffDataSource: UICollectionViewDiffableDataSource<String, ISImage>?
     private var dataSubscription: AnyCancellable?
 
-    init(dataProvider: SearchResultsViewModel, layout: UICollectionViewLayout) {
+    init(dataProvider: DataProvider, layout: UICollectionViewLayout) {
         self.dataProvider = dataProvider
         super.init(frame: .zero, collectionViewLayout: layout)
         backgroundColor = .systemGray5
@@ -21,7 +21,7 @@ class ISVerticalCollectionView: UICollectionView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func configureDataSource(with viewModel: SearchResultsViewModel) {
+    private func configureDataSource(with viewModel: DataProvider) {
         diffDataSource = .init(collectionView: self) { [weak viewModel] collection, indexPath, image in
             return collection.deque(ISMediaCell.self, for: indexPath) { cell in
                 cell.subscribe(to: viewModel?.imagePublisher(for: image))

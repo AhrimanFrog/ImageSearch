@@ -13,7 +13,7 @@ class ScreenFactory {
         switch screen {
         case .start: return HostingController(contentView: titleScreen())
         case let .results(response, request): return HostingController(contentView: resultsScreen(response, request))
-        default: fatalError("Not implemented")
+        case let .photo(mainImage, related): return HostingController(contentView: photoScreen(mainImage, related))
         }
     }
 
@@ -34,5 +34,12 @@ class ScreenFactory {
             query: request
         ) { [weak self] in self?.navigationHandler?.navigate(to: $0) }
         return SearchResultsScreen(viewModel: SearchResultsViewModel(dependencies: dependencies))
+    }
+
+    private func photoScreen(_ mainImage: ISImage, _ related: [ISImage]) -> PhotoScreen {
+        let dependencies = PhotoScreenViewModel.Dependencies(
+            networkManager: networkManager, topImage: mainImage, related: related
+        ) { [weak self] in self?.navigationHandler?.navigate(to: .start) }
+        return PhotoScreen(viewModel: .init(dependencies: dependencies))
     }
 }

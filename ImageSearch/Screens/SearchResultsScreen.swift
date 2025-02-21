@@ -3,7 +3,7 @@ import SnapKit
 import Combine
 
 final class SearchResultsScreen: ISScreen<SearchResultsViewModel> {
-    private let header = ISHeader()
+    private let header = ISHeaderBlock()
     private let totalResultsLabel = ISInfoLabel(frame: .zero)
     private let relatedLabel = ISCommentLabel(frame: .zero)
     private let relatedCollection: ISHorizontalCollectionView
@@ -83,7 +83,7 @@ final class SearchResultsScreen: ISScreen<SearchResultsViewModel> {
     }
 }
 
-final class SearchResultsViewModel: ViewModel {
+final class SearchResultsViewModel: ViewModel, DataProvider {
     private static let maximumTags = 8
 
     struct Dependencies {
@@ -143,7 +143,9 @@ final class SearchResultsViewModel: ViewModel {
     }
 
     func openPhotoScreen(path: IndexPath) {
-        goTo(.photo(images.value[path.item], dependencies.initialResults))
+        let targetImage = images.value[path.item]
+        let related = images.value.filter { $0.id != targetImage.id }.prefix(20)
+        goTo(.photo(images.value[path.item], Array(related)))
     }
 
     private func updateScreen(response: APIImagesResponse, request: String) {

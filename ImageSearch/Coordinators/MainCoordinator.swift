@@ -4,7 +4,7 @@ class MainCoordinator: Coordinator {
     enum Destination {
         case start
         case results(APIImagesResponse, String)
-        case photo(ISImage, APIImagesResponse)
+        case photo(ISImage, [ISImage])
     }
 
     private let window: UIWindow
@@ -28,12 +28,8 @@ class MainCoordinator: Coordinator {
         switch destination {
         case .start:
             navigationController.popToRootViewController(animated: true)
-        case let .results(response, request):
-            navigationController.pushViewController(
-                screenFactory.build(screen: .results(response, request)), animated: true
-            )
         default:
-            fatalError("Not implemented")
+            navigationController.pushViewController(screenFactory.build(screen: destination), animated: true)
         }
     }
 

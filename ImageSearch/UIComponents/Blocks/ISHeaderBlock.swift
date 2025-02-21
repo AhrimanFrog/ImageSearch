@@ -1,7 +1,7 @@
 import UIKit
 import SnapKit
 
-class ISHeader: UIView {
+class ISHeaderBlock: UIView {
     let homeButton = UIButton()
     let searchField = ISSearchField()
     let preferencesButton = UIButton()
