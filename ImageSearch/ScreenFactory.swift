@@ -32,14 +32,16 @@ class ScreenFactory {
             networkManager: networkManager,
             initialResults: response,
             query: request
-        ) { [weak self] in self?.navigationHandler?.navigate(to: $0) }
+        ) { [weak self] in self?.navigationHandler?.recieveStateChange($0) }
         return SearchResultsScreen(viewModel: SearchResultsViewModel(dependencies: dependencies))
     }
 
     private func photoScreen(_ mainImage: ISImage, _ related: [ISImage]) -> PhotoScreen {
         let dependencies = PhotoScreenViewModel.Dependencies(
-            networkManager: networkManager, topImage: mainImage, related: related
-        ) { [weak self] in self?.navigationHandler?.navigate(to: .start) }
+            networkManager: networkManager,
+            topImage: mainImage,
+            related: related
+        ) { [weak self] in self?.navigationHandler?.recieveStateChange($0) }
         return PhotoScreen(viewModel: .init(dependencies: dependencies))
     }
 }

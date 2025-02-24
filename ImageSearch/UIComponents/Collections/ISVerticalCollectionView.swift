@@ -49,6 +49,7 @@ extension ISVerticalCollectionView: UICollectionViewDelegate {
 
     func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         dataProvider.openPhotoScreen(path: indexPath)
+        setContentOffset(.zero, animated: true)
     }
 }
 

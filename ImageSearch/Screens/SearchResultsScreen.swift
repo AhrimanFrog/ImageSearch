@@ -38,7 +38,10 @@ final class SearchResultsScreen: ISScreen<SearchResultsViewModel> {
     }
 
     private func bindNavigation() {
-        header.homeButton.addAction(UIAction { [weak self] _ in self?.viewModel.goTo(.start) }, for: .touchUpInside)
+        header.homeButton.addAction(
+            UIAction { [weak self] _ in self?.viewModel.changeState(.success(.start)) },
+            for: .touchUpInside
+        )
         header.searchField.addInputProcessor { [weak self] input in self?.viewModel.displayResults(of: input) }
     }
 
@@ -90,7 +93,7 @@ final class SearchResultsViewModel: ViewModel, DataProvider {
         let networkManager: NetworkManager
         let initialResults: APIImagesResponse
         var query: String
-        let navigationHandler: (MainCoordinator.Destination) -> Void
+        let navigationHandler: NavigationHandler
     }
 
     private var dependencies: Dependencies
@@ -102,7 +105,7 @@ final class SearchResultsViewModel: ViewModel, DataProvider {
     let related: CurrentValueSubject<[String], Never>
 
     var query: String { dependencies.query }
-    var goTo: (MainCoordinator.Destination) -> Void { dependencies.navigationHandler }
+    var changeState: NavigationHandler { dependencies.navigationHandler }
 
     init(dependencies: Dependencies) {
         self.dependencies = dependencies
@@ -136,7 +139,7 @@ final class SearchResultsViewModel: ViewModel, DataProvider {
             .sink { [weak self] result in
                 switch result {
                 case .success(let respponse): self?.updateScreen(response: respponse, request: request)
-                case .failure(let error): print(error.errorDescription)
+                case .failure(let error): self?.changeState(.failure(error))
                 }
             }
             .store(in: &disposalBag)
@@ -145,7 +148,7 @@ final class SearchResultsViewModel: ViewModel, DataProvider {
     func openPhotoScreen(path: IndexPath) {
         let targetImage = images.value[path.item]
         let related = images.value.filter { $0.id != targetImage.id }.prefix(20)
-        goTo(.photo(images.value[path.item], Array(related)))
+        changeState(.success(.photo(images.value[path.item], Array(related))))
     }
 
     private func updateScreen(response: APIImagesResponse, request: String) {

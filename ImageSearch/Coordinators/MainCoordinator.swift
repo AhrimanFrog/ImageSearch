@@ -24,6 +24,13 @@ class MainCoordinator: Coordinator {
         window.makeKeyAndVisible()
     }
 
+    func recieveStateChange<ERROR: LocalizedError>(_ change: Result<Destination, ERROR>) {
+        switch change {
+        case .success(let destination): navigate(to: destination)
+        case .failure(let error): handleError(with: error.errorDescription ?? "Unknown error")
+        }
+    }
+
     func navigate(to destination: Destination) {
         switch destination {
         case .start:

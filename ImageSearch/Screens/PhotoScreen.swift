@@ -31,13 +31,13 @@ class PhotoScreen: ISScreen<PhotoScreenViewModel> {
 
     private func bindViewModel() {
         viewModel.topImage
-            .sink { [weak self] imageModel in
-            guard let self else { return }
-            self.viewModel.imagePublisher(for: imageModel)
-                .receive(on: DispatchQueue.main)
-                .sink { uiimage in self.photoImage.image = uiimage }
-                .store(in: &self.disposalBag)
+            .flatMap { [weak self] imageModel in
+                guard let self else { return Just(UIImage(resource: .notFound)).eraseToAnyPublisher() }
+                photoInfoBlock.setImageFormat(toFormatOf: imageModel)
+                return viewModel.imagePublisher(for: imageModel).eraseToAnyPublisher()
             }
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] newImage in self?.photoImage.image = newImage }
             .store(in: &disposalBag)
 
         header.homeButton.addAction(
@@ -49,6 +49,7 @@ class PhotoScreen: ISScreen<PhotoScreenViewModel> {
     private func configure() {
         backgroundColor = .systemGray5
         relatedLabel.text = "Related"
+        photoImage.contentMode = .scaleAspectFit
     }
 
     private func setConstraints() {
@@ -82,7 +83,7 @@ class PhotoScreen: ISScreen<PhotoScreenViewModel> {
         relatedLabel.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(16)
             make.top.equalTo(photoInfoBlock.snp.bottom).inset(-16)
-            make.width.equalTo(64)
+            make.width.equalTo(74)
             make.height.equalTo(22)
         }
 
@@ -99,12 +100,12 @@ class PhotoScreenViewModel: ViewModel, DataProvider {
         let networkManager: NetworkManager
         let topImage: ISImage
         let related: [ISImage]
-        let goHome: () -> Void
+        let navigationHandler: NavigationHandler
     }
 
     let images: CurrentValueSubject<[ISImage], Never>
     let topImage: CurrentValueSubject<ISImage, Never>
-    let goHome: () -> Void
+    let navigationHandler: NavigationHandler
 
     private let networkManager: NetworkManager
     private var imageDownloadSubscription: AnyCancellable?
@@ -113,12 +114,12 @@ class PhotoScreenViewModel: ViewModel, DataProvider {
         topImage = .init(dependencies.topImage)
         images = .init(dependencies.related)
         networkManager = dependencies.networkManager
-        goHome = dependencies.goHome
+        navigationHandler = dependencies.navigationHandler
     }
 
     func returnToHomeScreen() {
         imageDownloadSubscription?.cancel()
-        goHome()
+        navigationHandler(.success(.start))
     }
 
     func openPhotoScreen(path: IndexPath) {
@@ -129,7 +130,7 @@ class PhotoScreenViewModel: ViewModel, DataProvider {
             .sink { [weak self] result in
                 switch result {
                 case .success(let response): self?.images.send(response.hits)
-                case .failure(let error): print(error)
+                case .failure(let error): self?.navigationHandler(.failure(error))
                 }
             }
         topImage.send(newTopImage)
