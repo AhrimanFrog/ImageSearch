@@ -40,8 +40,10 @@ class ScreenFactory {
         let dependencies = PhotoScreenViewModel.Dependencies(
             networkManager: networkManager,
             topImage: mainImage,
-            related: related
-        ) { [weak self] in self?.navigationHandler?.recieveStateChange($0) }
+            related: related,
+            navigationHandler: { [weak self] in self?.navigationHandler?.recieveStateChange($0) },
+            share: { [weak self] image, link in self?.navigationHandler?.share(image: image, link: link) }
+        )
         return PhotoScreen(viewModel: .init(dependencies: dependencies))
     }
 }

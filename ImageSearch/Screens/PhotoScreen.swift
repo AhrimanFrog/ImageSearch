@@ -3,7 +3,7 @@ import SnapKit
 import Combine
 
 class PhotoScreen: ISScreen<PhotoScreenViewModel> {
-    private let photoSavedView = UIView()
+    private let photoSavedView = SaveSuccessfulView()
     private let header = ISHeaderBlock()
     private let photoImage = UIImageView()
     private let zoomButton = UIButton()
@@ -32,9 +32,8 @@ class PhotoScreen: ISScreen<PhotoScreenViewModel> {
 
     private func bindViewModel() {
         viewModel.topImage
-            .flatMap { [weak self] imageModel in
-                guard let self else { return Just(UIImage(resource: .notFound)).eraseToAnyPublisher() }
-                photoInfoBlock.setImageFormat(toFormatOf: imageModel)
+            .flatMap { [weak self, viewModel] imageModel in
+                self?.photoInfoBlock.setImageFormat(toFormatOf: imageModel)
                 return viewModel.imagePublisher(for: imageModel).eraseToAnyPublisher()
             }
             .receive(on: DispatchQueue.main)
@@ -46,6 +45,8 @@ class PhotoScreen: ISScreen<PhotoScreenViewModel> {
             for: .touchUpInside
         )
 
+        header.searchField.addInputProcessor { [weak self] input in self?.viewModel.openResultsOfQuery(input) }
+
         photoInfoBlock.downloadButton.addAction(
             UIAction { [weak self] _ in
                 guard let self, let image = photoImage.image else { return }
@@ -53,10 +54,14 @@ class PhotoScreen: ISScreen<PhotoScreenViewModel> {
             },
             for: .touchUpInside
         )
+
+        photoInfoBlock.shareButton.addAction(
+            UIAction { [weak self] _ in self?.viewModel.shareImage(self?.photoImage.image) },
+            for: .touchUpInside
+        )
     }
 
     private func animateSuccessfulSaving() {
-        photoSavedView.isHidden = false
         photoSavedView.alpha = 1
         UIView.animate(withDuration: 2) { [weak self] in self?.photoSavedView.alpha = 0.0 }
     }
@@ -65,7 +70,7 @@ class PhotoScreen: ISScreen<PhotoScreenViewModel> {
         backgroundColor = .systemGray5
         relatedLabel.text = "Related"
         photoImage.contentMode = .scaleAspectFit
-        photoSavedView.isHidden = true
+        photoSavedView.alpha = 0.0
     }
 
     private func setConstraints() {
@@ -123,43 +128,63 @@ class PhotoScreenViewModel: ViewModel, DataProvider {
         let topImage: ISImage
         let related: [ISImage]
         let navigationHandler: NavigationHandler
+        let share: (UIImage, String) -> Void
     }
 
     let images: CurrentValueSubject<[ISImage], Never>
     let topImage: CurrentValueSubject<ISImage, Never>
-    let navigationHandler: NavigationHandler
+    private let navigationHandler: NavigationHandler
+    private let share: (UIImage, String) -> Void
 
     private let networkManager: NetworkManager
-    private var imageDownloadSubscription: AnyCancellable?
+    private var disposalBag = Set<AnyCancellable>()
 
     init(dependencies: Dependencies) {
         topImage = .init(dependencies.topImage)
         images = .init(dependencies.related)
         networkManager = dependencies.networkManager
         navigationHandler = dependencies.navigationHandler
+        share = dependencies.share
     }
 
     func returnToHomeScreen() {
-        imageDownloadSubscription?.cancel()
         navigationHandler(.success(.start))
     }
 
     func openPhotoScreen(path: IndexPath) {
         let newTopImage = images.value[path.item]
-        imageDownloadSubscription = networkManager.getImages(
-            query: newTopImage.formattedTags.first ?? "", page: 1, userPreferences: .init()
-        )
+        guard let tag = newTopImage.formattedTags.first else { return }
+        networkManager.getImages(query: tag, page: 1, userPreferences: .init())
             .sink { [weak self] result in
                 switch result {
                 case .success(let response): self?.images.send(response.hits)
                 case .failure(let error): self?.navigationHandler(.failure(error))
                 }
             }
+            .store(in: &disposalBag)
         topImage.send(newTopImage)
+    }
+
+    func shareImage(_ image: UIImage?) {
+        guard let unwrappedImage = image else { return }
+        share(unwrappedImage, topImage.value.largeImageURL)
     }
 
     func imagePublisher(for model: ISImage) -> AnyPublisher<UIImage, Never> {
         return networkManager.downloadImage(from: model.largeImageURL)
+    }
+
+    func openResultsOfQuery(_ query: String) {
+        networkManager // TODO: get preferences from user defaults
+            .getImages(query: query, page: 1, userPreferences: .init())
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] result in
+                switch result {
+                case .success(let respponse): self?.navigationHandler(.success(.results(respponse, query)))
+                case .failure(let error): self?.navigationHandler(.failure(error))
+                }
+            }
+            .store(in: &disposalBag)
     }
 
     func downloadImageToGallery(_ image: UIImage, successfulSaveHandler: @escaping () -> Void) {

@@ -32,7 +32,13 @@ class ISSearchField: UITextField {
     }
 
     func addInputProcessor(_ processor: @escaping (String) -> Void) {
-        addAction(UIAction { [weak self] _ in processor(self?.text ?? "") }, for: .editingDidEnd)
+        addAction(
+            UIAction { [weak self] _ in
+                guard let text = self?.text, !text.isEmpty else { return }
+                processor(text)
+            },
+            for: .editingDidEnd
+        )
     }
 
     private func configure() {

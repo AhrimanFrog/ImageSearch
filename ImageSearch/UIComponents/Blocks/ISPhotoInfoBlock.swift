@@ -2,7 +2,7 @@ import UIKit
 import SnapKit
 
 class ISPhotoInfoBlock: UIView {
-    private let shareButton = ISButton(title: "Share", image: .share, style: .plain)
+    let shareButton = ISButton(title: "Share", image: .share, style: .plain)
     private let licenceTitleLabel = UILabel()
     private let licence = ISCommentLabel()
     let downloadButton = ISButton(title: "Download", image: .download)

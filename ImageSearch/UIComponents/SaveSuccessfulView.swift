@@ -18,6 +18,8 @@ class SaveSuccessfulView: UIView {
     private func configure() {
         checkmarkView.tintColor = .systemGray2
         textLabel.text = "Photo saved successfully!"
+        textLabel.numberOfLines = 2
+        textLabel.lineBreakMode = .byTruncatingTail
         textLabel.font = .openSans(ofSize: 18, style: .medium)
         textLabel.textColor = .systemGray2
         textLabel.textAlignment = .center
@@ -27,14 +29,14 @@ class SaveSuccessfulView: UIView {
         addSubviews(checkmarkView, textLabel)
 
         checkmarkView.snp.makeConstraints { make in
-            make.top.horizontalEdges.equalToSuperview().inset(15)
+            make.top.horizontalEdges.equalToSuperview().inset(25)
             make.height.equalTo(52)
         }
 
         textLabel.snp.makeConstraints { make in
             make.top.equalTo(checkmarkView.snp.bottom).inset(-8)
-            make.horizontalEdges.equalToSuperview().inset(5)
-            make.height.equalTo(26)
+            make.horizontalEdges.equalToSuperview()
+            make.bottom.equalToSuperview()
         }
     }
 }
