@@ -5,7 +5,7 @@ class ISPhotoInfoBlock: UIView {
     private let shareButton = ISButton(title: "Share", image: .share, style: .plain)
     private let licenceTitleLabel = UILabel()
     private let licence = ISCommentLabel()
-    private let downloadButton = ISButton(title: "Download", image: .download)
+    let downloadButton = ISButton(title: "Download", image: .download)
     private let photoFormatLabel = UILabel()
 
     override init(frame: CGRect) {

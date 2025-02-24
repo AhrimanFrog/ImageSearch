@@ -45,4 +45,12 @@ class MainCoordinator: Coordinator {
         alert.addAction(.init(title: "OK", style: .default))
         navigationController.present(alert, animated: true)
     }
+
+    func share(image: UIImage, link: String) {
+        let activityController = UIActivityViewController(
+            activityItems: [image, link],
+            applicationActivities: nil
+        )
+        navigationController.present(activityController, animated: true)
+    }
 }

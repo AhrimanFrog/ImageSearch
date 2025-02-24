@@ -44,6 +44,14 @@ class PhotoScreen: ISScreen<PhotoScreenViewModel> {
             UIAction { [weak self] _ in self?.viewModel.returnToHomeScreen() },
             for: .touchUpInside
         )
+
+        photoInfoBlock.downloadButton.addAction(
+            UIAction { [weak self] _ in
+                guard let self, let image = photoImage.image else { return }
+                viewModel.downloadImageToGallery(image)
+            },
+            for: .touchUpInside
+        )
     }
 
     private func configure() {
@@ -138,5 +146,19 @@ class PhotoScreenViewModel: ViewModel, DataProvider {
 
     func imagePublisher(for model: ISImage) -> AnyPublisher<UIImage, Never> {
         return networkManager.downloadImage(from: model.largeImageURL)
+    }
+    
+    func downloadImageToGallery(_ image: UIImage) {
+        UIImageWriteToSavedPhotosAlbum(
+            image, nil, #selector(handleImageSaving(image:didFinishSavingWithError:contextInfo:)), nil
+        )
+    }
+
+    @objc private func handleImageSaving(
+        image: UIImage,
+        didFinishSavingWithError error: Error?,
+        contextInfo: UnsafeRawPointer
+    ) {
+        print(error?.localizedDescription ?? "No Error")
     }
 }
