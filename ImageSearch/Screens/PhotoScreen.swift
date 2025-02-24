@@ -3,6 +3,7 @@ import SnapKit
 import Combine
 
 class PhotoScreen: ISScreen<PhotoScreenViewModel> {
+    private let photoSavedView = UIView()
     private let header = ISHeaderBlock()
     private let photoImage = UIImageView()
     private let zoomButton = UIButton()
@@ -48,16 +49,23 @@ class PhotoScreen: ISScreen<PhotoScreenViewModel> {
         photoInfoBlock.downloadButton.addAction(
             UIAction { [weak self] _ in
                 guard let self, let image = photoImage.image else { return }
-                viewModel.downloadImageToGallery(image)
+                viewModel.downloadImageToGallery(image) { [weak self] in self?.animateSuccessfulSaving() }
             },
             for: .touchUpInside
         )
+    }
+
+    private func animateSuccessfulSaving() {
+        photoSavedView.isHidden = false
+        photoSavedView.alpha = 1
+        UIView.animate(withDuration: 2) { [weak self] in self?.photoSavedView.alpha = 0.0 }
     }
 
     private func configure() {
         backgroundColor = .systemGray5
         relatedLabel.text = "Related"
         photoImage.contentMode = .scaleAspectFit
+        photoSavedView.isHidden = true
     }
 
     private func setConstraints() {
@@ -67,7 +75,8 @@ class PhotoScreen: ISScreen<PhotoScreenViewModel> {
             zoomButton,
             photoInfoBlock,
             relatedLabel,
-            relatedCollection
+            relatedCollection,
+            photoSavedView
         )
 
         header.snp.makeConstraints { make in
@@ -98,6 +107,11 @@ class PhotoScreen: ISScreen<PhotoScreenViewModel> {
         relatedCollection.snp.makeConstraints { make in
             make.horizontalEdges.bottom.equalToSuperview()
             make.top.equalTo(relatedLabel.snp.bottom).inset(-16)
+        }
+
+        photoSavedView.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+            make.height.width.equalTo(120)
         }
     }
 }
@@ -147,11 +161,12 @@ class PhotoScreenViewModel: ViewModel, DataProvider {
     func imagePublisher(for model: ISImage) -> AnyPublisher<UIImage, Never> {
         return networkManager.downloadImage(from: model.largeImageURL)
     }
-    
-    func downloadImageToGallery(_ image: UIImage) {
+
+    func downloadImageToGallery(_ image: UIImage, successfulSaveHandler: @escaping () -> Void) {
         UIImageWriteToSavedPhotosAlbum(
             image, nil, #selector(handleImageSaving(image:didFinishSavingWithError:contextInfo:)), nil
         )
+        DispatchQueue.main.async { successfulSaveHandler() }
     }
 
     @objc private func handleImageSaving(
