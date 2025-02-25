@@ -9,12 +9,12 @@ class PhotoScreen: ISScreen<PhotoScreenViewModel> {
     private let zoomButton = UIButton()
     private let photoInfoBlock = ISPhotoInfoBlock(frame: .zero)
     private let relatedLabel = ISInfoLabel()
-    private let relatedCollection: ISVerticalCollectionView<ISMediaCell>
+    private let relatedCollection: ISVerticalCollectionView
 
     private var disposalBag = Set<AnyCancellable>()
 
     override init(viewModel: PhotoScreenViewModel) {
-        relatedCollection = .init(dataProvider: viewModel, layout: .mediaLayout(), cell: ISMediaCell.self)
+        relatedCollection = .init(dataProvider: viewModel, layout: .mediaLayout(), cellType: ISMediaCell.self)
         super.init(viewModel: viewModel)
     }
 
@@ -133,8 +133,8 @@ class PhotoScreenViewModel: ViewModel, DataProvider {
 
     let images: CurrentValueSubject<[ISImage], Never>
     let topImage: CurrentValueSubject<ISImage, Never>
+    let share: (UIImage, String) -> Void
     private let navigationHandler: NavigationHandler
-    private let share: (UIImage, String) -> Void
 
     private let networkManager: NetworkManager
     private var disposalBag = Set<AnyCancellable>()
@@ -151,9 +151,8 @@ class PhotoScreenViewModel: ViewModel, DataProvider {
         navigationHandler(.success(.start))
     }
 
-    func openPhotoScreen(path: IndexPath) {
-        let newTopImage = images.value[path.item]
-        guard let tag = newTopImage.formattedTags.first else { return }
+    func openPhotoScreen(forPhoto photo: ISImage) {
+        guard let tag = photo.formattedTags.first else { return }
         networkManager.getImages(query: tag, page: 1, userPreferences: .init())
             .sink { [weak self] result in
                 switch result {
@@ -162,7 +161,7 @@ class PhotoScreenViewModel: ViewModel, DataProvider {
                 }
             }
             .store(in: &disposalBag)
-        topImage.send(newTopImage)
+        topImage.send(photo)
     }
 
     func shareImage(_ image: UIImage?) {

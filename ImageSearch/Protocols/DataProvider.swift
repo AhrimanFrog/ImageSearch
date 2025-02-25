@@ -4,9 +4,10 @@ import UIKit
 
 protocol DataProvider: AnyObject {
     func fetchMoreResults()
-    func openPhotoScreen(path: IndexPath)
+    func openPhotoScreen(forPhoto: ISImage)
     func imagePublisher(for: ISImage) -> AnyPublisher<UIImage, Never>
     var images: CurrentValueSubject<[ISImage], Never> { get }
+    var share: (UIImage, String) -> Void { get }
 }
 
 

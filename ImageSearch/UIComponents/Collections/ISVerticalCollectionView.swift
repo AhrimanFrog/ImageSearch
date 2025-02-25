@@ -1,22 +1,32 @@
 import UIKit
 import Combine
 
-class ISVerticalCollectionView<CELL: ISMediaCell>:
-    UICollectionView, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout
-{
+class ISVerticalCollectionView: UICollectionView {
     private var dataProvider: DataProvider
     private var diffDataSource: UICollectionViewDiffableDataSource<String, ISImage>?
     private var dataSubscription: AnyCancellable?
-    private let cellType: CELL.Type
 
-    init(dataProvider: DataProvider, layout: UICollectionViewLayout, cell: CELL.Type) {
+    convenience init(
+        dataProvider: DataProvider,
+        layout: UICollectionViewLayout,
+        cellType: (some ISMediaCell).Type
+    ) {
+        self.init(dataProvider: dataProvider, layout: layout)
+        register(cellType)
+
+        diffDataSource = .init(collectionView: self) { [dataProvider] collection, indexPath, image in
+            return collection.deque(cellType, for: indexPath) { cell in
+                cell.subscribe(to: dataProvider.imagePublisher(for: image))
+                cell.addTouchHandler { [weak self] touch in self?.handleCellTouch(share: touch) }
+                (cell as? ISSharedCell)?.addSource(image)
+            }
+        }
+    }
+
+    init(dataProvider: DataProvider, layout: UICollectionViewLayout) {
         self.dataProvider = dataProvider
-        cellType = cell
         super.init(frame: .zero, collectionViewLayout: layout)
         backgroundColor = .systemGray5
-
-        register(cellType)
-        configureDataSource(with: dataProvider)
         delegate = self
         dataSubscription = dataProvider.images.sink { [weak self] in self?.updateUI(with: $0) }
     }
@@ -25,13 +35,10 @@ class ISVerticalCollectionView<CELL: ISMediaCell>:
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func configureDataSource(with viewModel: DataProvider) {
-        diffDataSource = .init(collectionView: self) { [weak viewModel, cellType] collection, indexPath, image in
-            return collection.deque(cellType, for: indexPath) { cell in
-                cell.subscribe(to: viewModel?.imagePublisher(for: image))
-                guard let sharedCell = cell as? ISSharedCell else { return }
-                sharedCell.addSource(image.largeImageURL)
-            }
+    private func handleCellTouch(share: ISMediaCell.Touch) {
+        switch share {
+        case let .photo(photo): dataProvider.openPhotoScreen(forPhoto: photo)
+        case let .share(image, source): dataProvider.share(image, source)
         }
     }
 
@@ -41,8 +48,10 @@ class ISVerticalCollectionView<CELL: ISMediaCell>:
         snapshot.appendItems(images, toSection: "main")
         DispatchQueue.main.async { self.diffDataSource?.apply(snapshot) }
     }
+}
 
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {  // delegate method
+extension ISVerticalCollectionView: UICollectionViewDelegate {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let offsetY = scrollView.contentOffset.y
         let contentHeight = scrollView.contentSize.height
         let viewHeight = scrollView.frame.size.height
@@ -50,17 +59,14 @@ class ISVerticalCollectionView<CELL: ISMediaCell>:
         guard offsetY > (contentHeight - viewHeight) else { return }
         dataProvider.fetchMoreResults()
     }
+}
 
-    func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) { // delegate method
-        dataProvider.openPhotoScreen(path: indexPath)
-        setContentOffset(.zero, animated: true)
-    }
-
+extension ISVerticalCollectionView: UICollectionViewDelegateFlowLayout {
     func collectionView(
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
-    ) -> CGSize { // flow layout delegate
+    ) -> CGSize {
         let layout = collectionViewLayout as? UICollectionViewFlowLayout
         let collectionWidth = collectionView.frame.width
         let horizontalPadding = layout?.sectionInset.horizontal ?? 0

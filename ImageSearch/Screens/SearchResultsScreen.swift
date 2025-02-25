@@ -7,12 +7,12 @@ final class SearchResultsScreen: ISScreen<SearchResultsViewModel> {
     private let totalResultsLabel = ISInfoLabel(frame: .zero)
     private let relatedLabel = ISCommentLabel(frame: .zero)
     private let relatedCollection: ISHorizontalCollectionView
-    private let resultsCollection: ISVerticalCollectionView<ISSharedCell>
+    private let resultsCollection: ISVerticalCollectionView
 
     private var disposalBag = Set<AnyCancellable>()
 
     override init(viewModel: SearchResultsViewModel) {
-        resultsCollection = .init(dataProvider: viewModel, layout: .mediaLayout(), cell: ISSharedCell.self)
+        resultsCollection = .init(dataProvider: viewModel, layout: .mediaLayout(), cellType: ISSharedCell.self)
         relatedCollection = .init(viewModel: viewModel)
         super.init(viewModel: viewModel)
     }
@@ -94,6 +94,7 @@ final class SearchResultsViewModel: ViewModel, DataProvider {
         let initialResults: APIImagesResponse
         var query: String
         let navigationHandler: NavigationHandler
+        let share: (UIImage, String) -> Void
     }
 
     private var dependencies: Dependencies
@@ -103,6 +104,7 @@ final class SearchResultsViewModel: ViewModel, DataProvider {
     let total: CurrentValueSubject<Int, Never>
     let images: CurrentValueSubject<[ISImage], Never>
     let related: CurrentValueSubject<[String], Never>
+    let share: (UIImage, String) -> Void
 
     var query: String { dependencies.query }
     var changeState: NavigationHandler { dependencies.navigationHandler }
@@ -113,6 +115,7 @@ final class SearchResultsViewModel: ViewModel, DataProvider {
         images = .init(hits)
         related = .init(SearchResultsViewModel.gatherTagsFromMedia(hits))
         total = .init(dependencies.initialResults.total)
+        share = dependencies.share
     }
 
     func imagePublisher(for model: ISImage) -> AnyPublisher<UIImage, Never> {
@@ -145,10 +148,9 @@ final class SearchResultsViewModel: ViewModel, DataProvider {
             .store(in: &disposalBag)
     }
 
-    func openPhotoScreen(path: IndexPath) {
-        let targetImage = images.value[path.item]
-        let related = images.value.filter { $0.id != targetImage.id }.prefix(20)
-        changeState(.success(.photo(images.value[path.item], Array(related))))
+    func openPhotoScreen(forPhoto photo: ISImage) {
+        let related = images.value.filter { $0.id != photo.id }.prefix(20)
+        changeState(.success(.photo(photo, Array(related))))
     }
 
     private func updateScreen(response: APIImagesResponse, request: String) {

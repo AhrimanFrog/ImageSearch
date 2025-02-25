@@ -31,8 +31,10 @@ class ScreenFactory {
         let dependencies = SearchResultsViewModel.Dependencies(
             networkManager: networkManager,
             initialResults: response,
-            query: request
-        ) { [weak self] in self?.navigationHandler?.recieveStateChange($0) }
+            query: request,
+            navigationHandler: { [weak self] in self?.navigationHandler?.recieveStateChange($0) },
+            share: { [weak self] image, link in self?.navigationHandler?.share(image: image, link: link) }
+        )
         return SearchResultsScreen(viewModel: SearchResultsViewModel(dependencies: dependencies))
     }
 

@@ -3,18 +3,8 @@ import SnapKit
 
 class ISSharedCell: ISMediaCell {
     private let shareButton = UIButton()
-    private(set) var imageSource: ISImage?
 
     var image: UIImage { imageView.image ?? .notFound }
-
-    func addSource(_ source: ISImage) {
-        imageSource = source
-    }
-
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        imageSource = nil
-    }
 
     override func configure() {
         super.configure()
@@ -22,6 +12,13 @@ class ISSharedCell: ISMediaCell {
         registerForTraitChanges([UITraitActiveAppearance.self], action: #selector(setColor))
         setColor()
         shareButton.setImage(UIImage(resource: .share), for: .normal)
+        shareButton.addAction(
+            UIAction { [weak self] _ in
+                guard let self, let source = imageSource?.largeImageURL else { return }
+                touchHandler?(.share(image, source))
+            },
+            for: .touchUpInside
+        )
         shareButton.layer.cornerRadius = 5.0
         shareButton.snp.makeConstraints { make in
             make.width.height.equalTo(32)
