@@ -7,12 +7,12 @@ final class SearchResultsScreen: ISScreen<SearchResultsViewModel> {
     private let totalResultsLabel = ISInfoLabel(frame: .zero)
     private let relatedLabel = ISCommentLabel(frame: .zero)
     private let relatedCollection: ISHorizontalCollectionView
-    private let resultsCollection: ISVerticalCollectionView
+    private let resultsCollection: ISVerticalCollectionView<ISSharedCell>
 
     private var disposalBag = Set<AnyCancellable>()
 
     override init(viewModel: SearchResultsViewModel) {
-        resultsCollection = .init(dataProvider: viewModel, layout: .mediaLayout())
+        resultsCollection = .init(dataProvider: viewModel, layout: .mediaLayout(), cell: ISSharedCell.self)
         relatedCollection = .init(viewModel: viewModel)
         super.init(viewModel: viewModel)
     }

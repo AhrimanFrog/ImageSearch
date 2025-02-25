@@ -9,12 +9,12 @@ class PhotoScreen: ISScreen<PhotoScreenViewModel> {
     private let zoomButton = UIButton()
     private let photoInfoBlock = ISPhotoInfoBlock(frame: .zero)
     private let relatedLabel = ISInfoLabel()
-    private let relatedCollection: ISVerticalCollectionView
+    private let relatedCollection: ISVerticalCollectionView<ISMediaCell>
 
     private var disposalBag = Set<AnyCancellable>()
 
     override init(viewModel: PhotoScreenViewModel) {
-        relatedCollection = .init(dataProvider: viewModel, layout: .mediaLayout())
+        relatedCollection = .init(dataProvider: viewModel, layout: .mediaLayout(), cell: ISMediaCell.self)
         super.init(viewModel: viewModel)
     }
 

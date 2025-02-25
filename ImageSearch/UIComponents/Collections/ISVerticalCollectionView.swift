@@ -1,17 +1,21 @@
 import UIKit
 import Combine
 
-class ISVerticalCollectionView: UICollectionView {
+class ISVerticalCollectionView<CELL: ISMediaCell>:
+    UICollectionView, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout
+{
     private var dataProvider: DataProvider
     private var diffDataSource: UICollectionViewDiffableDataSource<String, ISImage>?
     private var dataSubscription: AnyCancellable?
+    private let cellType: CELL.Type
 
-    init(dataProvider: DataProvider, layout: UICollectionViewLayout) {
+    init(dataProvider: DataProvider, layout: UICollectionViewLayout, cell: CELL.Type) {
         self.dataProvider = dataProvider
+        cellType = cell
         super.init(frame: .zero, collectionViewLayout: layout)
         backgroundColor = .systemGray5
 
-        register(ISMediaCell.self)
+        register(cellType)
         configureDataSource(with: dataProvider)
         delegate = self
         dataSubscription = dataProvider.images.sink { [weak self] in self?.updateUI(with: $0) }
@@ -22,9 +26,11 @@ class ISVerticalCollectionView: UICollectionView {
     }
 
     private func configureDataSource(with viewModel: DataProvider) {
-        diffDataSource = .init(collectionView: self) { [weak viewModel] collection, indexPath, image in
-            return collection.deque(ISMediaCell.self, for: indexPath) { cell in
+        diffDataSource = .init(collectionView: self) { [weak viewModel, cellType] collection, indexPath, image in
+            return collection.deque(cellType, for: indexPath) { cell in
                 cell.subscribe(to: viewModel?.imagePublisher(for: image))
+                guard let sharedCell = cell as? ISSharedCell else { return }
+                sharedCell.addSource(image.largeImageURL)
             }
         }
     }
@@ -35,10 +41,8 @@ class ISVerticalCollectionView: UICollectionView {
         snapshot.appendItems(images, toSection: "main")
         DispatchQueue.main.async { self.diffDataSource?.apply(snapshot) }
     }
-}
 
-extension ISVerticalCollectionView: UICollectionViewDelegate {
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {  // delegate method
         let offsetY = scrollView.contentOffset.y
         let contentHeight = scrollView.contentSize.height
         let viewHeight = scrollView.frame.size.height
@@ -47,18 +51,16 @@ extension ISVerticalCollectionView: UICollectionViewDelegate {
         dataProvider.fetchMoreResults()
     }
 
-    func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) { // delegate method
         dataProvider.openPhotoScreen(path: indexPath)
         setContentOffset(.zero, animated: true)
     }
-}
 
-extension ISVerticalCollectionView: UICollectionViewDelegateFlowLayout {
     func collectionView(
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
-    ) -> CGSize {
+    ) -> CGSize { // flow layout delegate
         let layout = collectionViewLayout as? UICollectionViewFlowLayout
         let collectionWidth = collectionView.frame.width
         let horizontalPadding = layout?.sectionInset.horizontal ?? 0

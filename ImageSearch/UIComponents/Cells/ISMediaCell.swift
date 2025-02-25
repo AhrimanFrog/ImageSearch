@@ -3,8 +3,7 @@ import SnapKit
 import Combine
 
 class ISMediaCell: UICollectionViewCell, ReuseIdentifiable {
-    private let imageView = UIImageView()
-    private let shareButton = UIButton()
+    let imageView = UIImageView()
 
     private var imageSubscription: AnyCancellable?
 
@@ -29,17 +28,12 @@ class ISMediaCell: UICollectionViewCell, ReuseIdentifiable {
             .sink { [weak self] in self?.imageView.image = $0 }
     }
 
-    private func configure() {
-        addSubviews(imageView, shareButton)
-        shareButton.setBackgroundImage(UIImage(resource: .share), for: .normal)
+    func configure() {
+        addSubview(imageView)
         imageView.layer.cornerRadius = 5
         imageView.clipsToBounds = true
         imageView.contentMode = .scaleAspectFit
 
         imageView.snp.makeConstraints { $0.edges.equalToSuperview() }
-        shareButton.snp.makeConstraints { make in
-            make.width.height.lessThanOrEqualTo(32)
-            make.trailing.top.equalToSuperview().inset(20)
-        }
     }
 }
