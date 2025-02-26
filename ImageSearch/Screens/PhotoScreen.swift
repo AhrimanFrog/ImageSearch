@@ -5,8 +5,9 @@ import Combine
 class PhotoScreen: ISScreen<PhotoScreenViewModel> {
     private let photoSavedView = SaveSuccessfulView()
     private let header = ISHeaderBlock()
+    private let photoScrollView = UIScrollView()
     private let photoImage = UIImageView()
-    private let zoomButton = UIButton()
+    private let zoomButton = ISGreyButton(image: UIImage(sfImage: .zoomIn))
     private let photoInfoBlock = ISPhotoInfoBlock(frame: .zero)
     private let relatedLabel = ISInfoLabel()
     private let relatedCollection: ISVerticalCollectionView
@@ -76,6 +77,7 @@ class PhotoScreen: ISScreen<PhotoScreenViewModel> {
     private func setConstraints() {
         addSubviews(
             header,
+            photoScrollView,
             photoImage,
             zoomButton,
             photoInfoBlock,
@@ -90,10 +92,17 @@ class PhotoScreen: ISScreen<PhotoScreenViewModel> {
             make.height.equalTo(140)
         }
 
-        photoImage.snp.makeConstraints { make in
+        photoScrollView.snp.makeConstraints { make in
             make.horizontalEdges.equalToSuperview()
             make.top.equalTo(header.snp.bottom).inset(-10)
             make.height.lessThanOrEqualTo(220)
+        }
+
+        photoImage.snp.makeConstraints { $0.edges.equalTo(photoScrollView) }
+
+        zoomButton.snp.makeConstraints { make in
+            make.width.height.equalTo(32)
+            make.trailing.bottom.equalTo(photoImage).inset(20)
         }
 
         photoInfoBlock.snp.makeConstraints { make in
