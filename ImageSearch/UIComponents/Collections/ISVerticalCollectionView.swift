@@ -17,8 +17,8 @@ class ISVerticalCollectionView: UICollectionView {
         diffDataSource = .init(collectionView: self) { [dataProvider] collection, indexPath, image in
             return collection.deque(cellType, for: indexPath) { cell in
                 cell.subscribe(to: dataProvider.imagePublisher(for: image))
-                cell.addTouchHandler { [weak self] touch in self?.handleCellTouch(share: touch) }
-                (cell as? ISSharedCell)?.addSource(image)
+                cell.addTouchHandler { [weak self] touch in self?.handleCellTouch(touch) }
+                cell.addSource(image)
             }
         }
     }
@@ -35,8 +35,8 @@ class ISVerticalCollectionView: UICollectionView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func handleCellTouch(share: ISMediaCell.Touch) {
-        switch share {
+    private func handleCellTouch(_ touch: ISMediaCell.Touch) {
+        switch touch {
         case let .photo(photo): dataProvider.openPhotoScreen(forPhoto: photo)
         case let .share(image, source): dataProvider.share(image, source)
         }

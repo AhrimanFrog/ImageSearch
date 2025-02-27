@@ -28,8 +28,7 @@ class ZoomScreen: UIView, Screen {
     }
 
     private func setConstraints() {
-        addSubviews(scrollView, closeButton)
-        scrollView.addSubview(photoView)
+        addSubviews(scrollView, closeButton, photoView)
 
         closeButton.snp.makeConstraints { make in
             make.top.leading.equalTo(safeAreaLayoutGuide)
