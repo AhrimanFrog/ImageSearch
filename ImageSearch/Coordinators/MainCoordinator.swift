@@ -5,6 +5,7 @@ class MainCoordinator: Coordinator {
         case start
         case results(APIImagesResponse, String)
         case photo(ISImage, [ISImage])
+        case zoom(UIImage?)
     }
 
     private let window: UIWindow
@@ -35,9 +36,17 @@ class MainCoordinator: Coordinator {
         switch destination {
         case .start:
             navigationController.popToRootViewController(animated: true)
+        case .zoom:
+            let screen = screenFactory.build(screen: destination)
+            screen.modalPresentationStyle = .fullScreen
+            navigationController.present(screen, animated: true)
         default:
             navigationController.pushViewController(screenFactory.build(screen: destination), animated: true)
         }
+    }
+
+    func dismissScreen() {
+        navigationController.dismiss(animated: true)
     }
 
     func handleError(with text: String) {

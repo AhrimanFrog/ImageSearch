@@ -3,10 +3,6 @@ import UIKit
 class ScreenFactory {
     weak var navigationHandler: MainCoordinator?
 
-    enum Destination {
-        case start, results, photo
-    }
-
     private let networkManager = NetworkManager()
 
     func build(screen: MainCoordinator.Destination) -> UIViewController {
@@ -14,6 +10,7 @@ class ScreenFactory {
         case .start: return HostingController(contentView: titleScreen())
         case let .results(response, request): return HostingController(contentView: resultsScreen(response, request))
         case let .photo(mainImage, related): return HostingController(contentView: photoScreen(mainImage, related))
+        case let .zoom(image): return HostingController(contentView: zoomScreen(image: image))
         }
     }
 
@@ -47,5 +44,9 @@ class ScreenFactory {
             share: { [weak self] image, link in self?.navigationHandler?.share(image: image, link: link) }
         )
         return PhotoScreen(viewModel: .init(dependencies: dependencies))
+    }
+
+    private func zoomScreen(image: UIImage?) -> ZoomScreen {
+        return ZoomScreen(image: image) { [weak self] in self?.navigationHandler?.dismissScreen() }
     }
 }

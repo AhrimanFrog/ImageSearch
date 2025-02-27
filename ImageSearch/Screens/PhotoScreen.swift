@@ -1,11 +1,11 @@
 import UIKit
 import SnapKit
 import Combine
+import Hero
 
 class PhotoScreen: ISScreen<PhotoScreenViewModel> {
     private let photoSavedView = SaveSuccessfulView()
     private let header = ISHeaderBlock()
-    private let photoScrollView = UIScrollView()
     private let photoImage = UIImageView()
     private let zoomButton = ISGreyButton(image: UIImage(sfImage: .zoomIn))
     private let photoInfoBlock = ISPhotoInfoBlock(frame: .zero)
@@ -60,6 +60,11 @@ class PhotoScreen: ISScreen<PhotoScreenViewModel> {
             UIAction { [weak self] _ in self?.viewModel.shareImage(self?.photoImage.image) },
             for: .touchUpInside
         )
+
+        zoomButton.addAction(
+            UIAction { [weak self] _ in self?.viewModel.zoomPhoto(self?.photoImage.image) },
+            for: .touchUpInside
+        )
     }
 
     private func animateSuccessfulSaving() {
@@ -71,13 +76,13 @@ class PhotoScreen: ISScreen<PhotoScreenViewModel> {
         backgroundColor = .systemGray5
         relatedLabel.text = "Related"
         photoImage.contentMode = .scaleAspectFit
+        photoImage.heroID = "photo"
         photoSavedView.alpha = 0.0
     }
 
     private func setConstraints() {
         addSubviews(
             header,
-            photoScrollView,
             photoImage,
             zoomButton,
             photoInfoBlock,
@@ -92,13 +97,11 @@ class PhotoScreen: ISScreen<PhotoScreenViewModel> {
             make.height.equalTo(140)
         }
 
-        photoScrollView.snp.makeConstraints { make in
+        photoImage.snp.makeConstraints { make in
             make.horizontalEdges.equalToSuperview()
             make.top.equalTo(header.snp.bottom).inset(-10)
             make.height.lessThanOrEqualTo(220)
         }
-
-        photoImage.snp.makeConstraints { $0.edges.equalTo(photoScrollView) }
 
         zoomButton.snp.makeConstraints { make in
             make.width.height.equalTo(32)
@@ -129,7 +132,6 @@ class PhotoScreen: ISScreen<PhotoScreenViewModel> {
         }
     }
 }
-
 
 class PhotoScreenViewModel: ViewModel, DataProvider {
     struct Dependencies {
@@ -193,6 +195,10 @@ class PhotoScreenViewModel: ViewModel, DataProvider {
                 }
             }
             .store(in: &disposalBag)
+    }
+
+    func zoomPhoto(_ photo: UIImage?) {
+        navigationHandler(.success(.zoom(photo)))
     }
 
     func downloadImageToGallery(_ image: UIImage, successfulSaveHandler: @escaping () -> Void) {

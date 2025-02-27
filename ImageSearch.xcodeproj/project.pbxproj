@@ -11,6 +11,7 @@
 		D51BDB6E2D478D9C00F6DEDD /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = D51BDB6C2D478D9C00F6DEDD /* .swiftlint.yml */; };
 		D51BDB862D49372600F6DEDD /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = D51BDB852D49372600F6DEDD /* Config.xcconfig */; };
 		D51BDDE32D4BCF7F00F6DEDD /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = D51BDDE22D4BCF7F00F6DEDD /* SnapKit */; };
+		D5233C052D6F970000F8132F /* Hero in Frameworks */ = {isa = PBXBuildFile; productRef = D5233C042D6F970000F8132F /* Hero */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -88,6 +89,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D5233C052D6F970000F8132F /* Hero in Frameworks */,
 				D51BDDE32D4BCF7F00F6DEDD /* SnapKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -163,6 +165,7 @@
 			name = ImageSearch;
 			packageProductDependencies = (
 				D51BDDE22D4BCF7F00F6DEDD /* SnapKit */,
+				D5233C042D6F970000F8132F /* Hero */,
 			);
 			productName = ImageSearch;
 			productReference = D51BDB372D46E20E00F6DEDD /* ImageSearch.app */;
@@ -248,6 +251,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				D51BDDE02D4BCF5700F6DEDD /* XCRemoteSwiftPackageReference "SnapKit" */,
+				D5233C032D6F96EF00F8132F /* XCRemoteSwiftPackageReference "Hero" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = D51BDB382D46E20E00F6DEDD /* Products */;
@@ -641,6 +645,14 @@
 				minimumVersion = 5.7.1;
 			};
 		};
+		D5233C032D6F96EF00F8132F /* XCRemoteSwiftPackageReference "Hero" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/HeroTransitions/Hero";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.6.4;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -648,6 +660,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = D51BDDE02D4BCF5700F6DEDD /* XCRemoteSwiftPackageReference "SnapKit" */;
 			productName = SnapKit;
+		};
+		D5233C042D6F970000F8132F /* Hero */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D5233C032D6F96EF00F8132F /* XCRemoteSwiftPackageReference "Hero" */;
+			productName = Hero;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

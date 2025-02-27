@@ -6,6 +6,7 @@ extension UIImage {
         case zoomOut = "minus.magnifyingglass"
         case search = "magnifyingglass"
         case checkmark = "checkmark.seal.fill"
+        case close = "xmark.circle"
     }
 
     convenience init?(sfImage: SFImage) {
