@@ -22,6 +22,7 @@ class ZoomScreen: UIView, Screen {
 
         scrollView.minimumZoomScale = 1
         scrollView.maximumZoomScale = 10
+        scrollView.delegate = self
         scrollView.bounces = false
         photoView.contentMode = .scaleAspectFit
         photoView.heroID = "photo"

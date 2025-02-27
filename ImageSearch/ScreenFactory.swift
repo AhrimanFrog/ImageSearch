@@ -6,12 +6,14 @@ class ScreenFactory {
     private let networkManager = NetworkManager()
 
     func build(screen: MainCoordinator.Destination) -> UIViewController {
-        switch screen {
-        case .start: return HostingController(contentView: titleScreen())
-        case let .results(response, request): return HostingController(contentView: resultsScreen(response, request))
-        case let .photo(mainImage, related): return HostingController(contentView: photoScreen(mainImage, related))
-        case let .zoom(image): return HostingController(contentView: zoomScreen(image: image))
+        let controller = switch screen {
+        case .start: HostingController(contentView: titleScreen())
+        case let .results(response, request): HostingController(contentView: resultsScreen(response, request))
+        case let .photo(mainImage, related): HostingController(contentView: photoScreen(mainImage, related))
+        case let .zoom(image): HostingController(contentView: zoomScreen(image: image))
         }
+        controller.isHeroEnabled = true
+        return controller
     }
 
     private func titleScreen() -> TitleSearchScreen {
