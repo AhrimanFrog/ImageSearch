@@ -1,7 +1,7 @@
 import Foundation
 
 struct Preferences {
-    enum ImageType: String {
+    enum ImageType: String, CaseIterable {
         case all, photo, illustration, vector
     }
 

@@ -4,7 +4,7 @@ import Combine
 
 final class TitleSearchScreen: ISScreen<TitleSearchViewModel> {
     private let title = ISTitleLabel()
-    private let searchField = ISSearchField()
+    private let searchField = ISDropDownSearchField()
     private let searchButton = ISButton(title: "Search", image: .init(sfImage: .search))
     private let backgroundImage = UIImageView()
 
@@ -16,12 +16,12 @@ final class TitleSearchScreen: ISScreen<TitleSearchViewModel> {
     }
 
     private func bind() {
-        searchField.addInputProcessor { [weak self] input in self?.viewModel.transitToResults(of: input) }
+        searchField.inputField.addInputProcessor { [weak self] input in self?.viewModel.transitToResults(of: input) }
         searchButton.addAction(
             UIAction { [weak self] _ in
-                guard let self, let text = searchField.text, !text.isEmpty else { return }
-                guard searchField.isFirstResponder else { return viewModel.transitToResults(of: text) }
-                searchField.endEditing(false)
+                guard let self, let text = searchField.inputField.text, !text.isEmpty else { return }
+                guard searchField.inputField.isFirstResponder else { return viewModel.transitToResults(of: text) }
+                searchField.inputField.endEditing(false)
             },
             for: .touchUpInside
         )

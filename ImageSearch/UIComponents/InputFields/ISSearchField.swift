@@ -7,6 +7,8 @@ class ISSearchField: UITextField {
         super.init(frame: .zero)
         configure()
         addDoneButton()
+        setColor()
+        registerForTraitChanges([UITraitActiveAppearance.self], action: #selector(setColor))
     }
 
     override func editingRect(forBounds bounds: CGRect) -> CGRect {
@@ -41,9 +43,12 @@ class ISSearchField: UITextField {
         )
     }
 
+    @objc func setColor() {
+        layer.backgroundColor = UIColor.systemGray6.cgColor
+    }
+
     private func configure() {
         placeholder = "Search images, vectors and more"
-        layer.backgroundColor = UIColor(red: 0.887, green: 0.887, blue: 0.887, alpha: 1).cgColor
         layer.cornerRadius = 8
         leftViewMode = .always
         let imageView = UIImageView(image: UIImage(sfImage: .search))
