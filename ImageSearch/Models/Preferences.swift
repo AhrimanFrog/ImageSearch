@@ -1,6 +1,6 @@
 import Foundation
 
-struct Preferences {
+class Preferences {
     enum ImageType: String, CaseIterable {
         case all, photo, illustration, vector
     }
@@ -76,7 +76,7 @@ struct Preferences {
             "min_height": String(minHeight),
             "order": order.rawValue,
             "colors": prepareColors(),
-            "safesearch": order.rawValue,
+            "safesearch": String(safeSerach),
             "category": category?.rawValue
         ]
     }
