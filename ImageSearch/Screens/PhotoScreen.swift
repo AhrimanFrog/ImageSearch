@@ -164,7 +164,7 @@ class PhotoScreenViewModel: ViewModel, DataProvider {
 
     func openPhotoScreen(forPhoto photo: ISImage) {
         guard let tag = photo.formattedTags.first else { return }
-        networkManager.getImages(query: tag, page: 1, userPreferences: .init())
+        networkManager.getImages(query: tag, page: 1, userPreferences: .shared)
             .sink { [weak self] result in
                 switch result {
                 case .success(let response): self?.images.send(response.hits)
@@ -185,8 +185,8 @@ class PhotoScreenViewModel: ViewModel, DataProvider {
     }
 
     func openResultsOfQuery(_ query: String) {
-        networkManager // TODO: get preferences from user defaults
-            .getImages(query: query, page: 1, userPreferences: .init())
+        networkManager
+            .getImages(query: query, page: 1, userPreferences: .shared)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] result in
                 switch result {

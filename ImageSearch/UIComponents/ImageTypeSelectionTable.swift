@@ -1,10 +1,12 @@
 import UIKit
 
 class ImageTypeSelectionTable: UITableViewController {
+    private let preferences: Preferences
     private let allowedChoises: [Preferences.ImageType]
 
-    init(activeType: Preferences.ImageType) {
-        allowedChoises = Preferences.ImageType.allCases.filter { $0 != activeType }
+    init(preferences: Preferences) {
+        self.preferences = preferences
+        allowedChoises = Preferences.ImageType.allCases.filter { $0 != preferences.imageType.value }
         super.init(style: .plain)
         modalPresentationStyle = .popover
         tableView.register(ISTypeCell.self, forCellReuseIdentifier: ISTypeCell.reuseID)
@@ -24,5 +26,9 @@ class ImageTypeSelectionTable: UITableViewController {
         ) as! ISTypeCell // swiftlint:disable:this force_cast
         cell.label.text = allowedChoises[indexPath.row].rawValue
         return cell
+    }
+
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        preferences.imageType.send(allowedChoises[indexPath.row])
     }
 }

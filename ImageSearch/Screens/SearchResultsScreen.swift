@@ -136,8 +136,8 @@ final class SearchResultsViewModel: ViewModel, DataProvider {
     }
 
     func displayResults(of request: String) {
-        dependencies.networkManager // TODO: get preferences from user defaults
-            .getImages(query: request, page: 1, userPreferences: Preferences())
+        dependencies.networkManager
+            .getImages(query: request, page: 1, userPreferences: .shared)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] result in
                 switch result {

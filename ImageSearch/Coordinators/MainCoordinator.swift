@@ -9,8 +9,8 @@ class MainCoordinator: Coordinator {
     }
 
     private let window: UIWindow
-    private let navigationController: UINavigationController
     private let screenFactory: ScreenFactory
+    let navigationController: UINavigationController
 
     init(window: UIWindow) {
         screenFactory = ScreenFactory()

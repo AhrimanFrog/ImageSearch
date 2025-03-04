@@ -46,7 +46,7 @@ class ISDropDownSearchField: UIView {
 
         inputField.snp.makeConstraints { make in
             make.top.bottom.leading.equalToSuperview()
-            make.trailing.equalToSuperview().inset(90)
+            make.trailing.equalToSuperview().inset(100)
         }
 
         currentTypeButton.snp.makeConstraints { make in

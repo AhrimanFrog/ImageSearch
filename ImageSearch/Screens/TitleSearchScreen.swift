@@ -8,6 +8,8 @@ final class TitleSearchScreen: ISScreen<TitleSearchViewModel> {
     private let searchButton = ISButton(title: "Search", image: .init(sfImage: .search))
     private let backgroundImage = UIImageView()
 
+    private var preferencesSubscription: AnyCancellable?
+
     override func viewDidLoad() {
         super.viewDidLoad()
         bind()
@@ -22,6 +24,18 @@ final class TitleSearchScreen: ISScreen<TitleSearchViewModel> {
                 guard let self, let text = searchField.inputField.text, !text.isEmpty else { return }
                 guard searchField.inputField.isFirstResponder else { return viewModel.transitToResults(of: text) }
                 searchField.inputField.endEditing(false)
+            },
+            for: .touchUpInside
+        )
+        preferencesSubscription = Preferences.shared.imageType.sink { [weak self] newValue in
+            self?.searchField.currentTypeButton.setTitle(newValue.rawValue.capitalized, for: .normal)
+        }
+        searchField.currentTypeButton.addAction(
+            UIAction { [weak self] _ in
+                let tableController = ImageTypeSelectionTable(preferences: .shared)
+                tableController.modalPresentationStyle = .popover
+                tableController.popoverPresentationController?.sourceView = self?.searchField.currentTypeButton
+                self?.viewModel.spawnTypeChoiseTable(tableController)
             },
             for: .touchUpInside
         )
@@ -56,21 +70,24 @@ final class TitleSearchScreen: ISScreen<TitleSearchViewModel> {
 }
 
 final class TitleSearchViewModel: ViewModel {
+    let spawnTypeChoiseTable: (UIViewController) -> Void
     private let networkManager: NetworkManager
     private let requestTransitionToResults: (Result<(APIImagesResponse, String), ISNetworkError>) -> Void
     private var apiSubscription: AnyCancellable?
 
     init(
         networkManager: NetworkManager,
+        spawnTypeChoiseTable: @escaping (UIViewController) -> Void,
         coordinatorNotifier: @escaping (Result<(APIImagesResponse, String), ISNetworkError>) -> Void
     ) {
         self.networkManager = networkManager
+        self.spawnTypeChoiseTable = spawnTypeChoiseTable
         requestTransitionToResults = coordinatorNotifier
     }
 
     func transitToResults(of request: String) {
-        apiSubscription = networkManager // TODO: get preferences from user defaults
-            .getImages(query: request, page: 1, userPreferences: Preferences())
+        apiSubscription = networkManager
+            .getImages(query: request, page: 1, userPreferences: .shared)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] result in
                 switch result {

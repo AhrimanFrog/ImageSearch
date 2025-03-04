@@ -17,12 +17,20 @@ class ScreenFactory {
     }
 
     private func titleScreen() -> TitleSearchScreen {
-        let titleViewModel = TitleSearchViewModel(networkManager: networkManager) { [weak self] result in
-            switch result {
-            case let .success((response, request)): self?.navigationHandler?.navigate(to: .results(response, request))
-            case .failure(let error): self?.navigationHandler?.handleError(with: error.errorDescription)
+        let titleViewModel = TitleSearchViewModel(
+            networkManager: networkManager,
+            spawnTypeChoiseTable: { [weak self] controller in
+                self?.navigationHandler?.navigationController.present(controller, animated: true, completion: nil)
+            },
+            coordinatorNotifier: { [weak self] result in
+                switch result {
+                case let .success((response, request)):
+                    self?.navigationHandler?.navigate(to: .results(response, request))
+                case .failure(let error):
+                    self?.navigationHandler?.handleError(with: error.errorDescription)
+                }
             }
-        }
+        )
         return TitleSearchScreen(viewModel: titleViewModel)
     }
 

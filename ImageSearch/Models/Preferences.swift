@@ -1,6 +1,9 @@
+import Combine
 import Foundation
 
 class Preferences {
+    static let shared = Preferences()
+
     enum ImageType: String, CaseIterable {
         case all, photo, illustration, vector
     }
@@ -53,7 +56,7 @@ class Preferences {
         case music
     }
 
-    var imageType: ImageType = .all
+    let imageType = CurrentValueSubject<ImageType, Never>(.all)
     var orientation: Orientation = .all
     var category: Category?
     var minWidth: Int = 0
@@ -70,7 +73,7 @@ class Preferences {
 
     var asDict: [String: String?] {
         return [
-            "image_type": imageType.rawValue,
+            "image_type": imageType.value.rawValue,
             "orientation": orientation.rawValue,
             "min_width": String(minWidth),
             "min_height": String(minHeight),
