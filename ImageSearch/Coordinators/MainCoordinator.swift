@@ -8,9 +8,13 @@ class MainCoordinator: Coordinator {
         case zoom(UIImage?)
     }
 
+    enum ModalState {
+        case present(UIViewController), dismiss
+    }
+
     private let window: UIWindow
     private let screenFactory: ScreenFactory
-    let navigationController: UINavigationController
+    private let navigationController: UINavigationController
 
     init(window: UIWindow) {
         screenFactory = ScreenFactory()
@@ -45,8 +49,11 @@ class MainCoordinator: Coordinator {
         }
     }
 
-    func dismissScreen() {
-        navigationController.dismiss(animated: true)
+    func modalController(toState state: ModalState) {
+        switch state {
+        case .dismiss: navigationController.dismiss(animated: true)
+        case .present(let controller): navigationController.present(controller, animated: true)
+        }
     }
 
     func handleError(with text: String) {

@@ -29,13 +29,21 @@ final class TitleSearchScreen: ISScreen<TitleSearchViewModel> {
         )
         preferencesSubscription = Preferences.shared.imageType.sink { [weak self] newValue in
             self?.searchField.currentTypeButton.setTitle(newValue.rawValue.capitalized, for: .normal)
+            self?.viewModel.manageChoiceTable(.dismiss)
         }
         searchField.currentTypeButton.addAction(
             UIAction { [weak self] _ in
                 let tableController = ImageTypeSelectionTable(preferences: .shared)
                 tableController.modalPresentationStyle = .popover
-                tableController.popoverPresentationController?.sourceView = self?.searchField.currentTypeButton
-                self?.viewModel.spawnTypeChoiseTable(tableController)
+                if let popoverController = tableController.popoverPresentationController {
+                    tableController.preferredContentSize = tableController.view.systemLayoutSizeFitting(
+                        UIView.layoutFittingCompressedSize
+                    )
+                    popoverController.delegate = PopoverPresentationDelegate.shared
+                    popoverController.sourceView = self?.searchField.currentTypeButton
+                    popoverController.permittedArrowDirections = [.up, .down]
+                }
+                self?.viewModel.manageChoiceTable(.present(tableController))
             },
             for: .touchUpInside
         )
@@ -70,18 +78,18 @@ final class TitleSearchScreen: ISScreen<TitleSearchViewModel> {
 }
 
 final class TitleSearchViewModel: ViewModel {
-    let spawnTypeChoiseTable: (UIViewController) -> Void
+    let manageChoiceTable: (MainCoordinator.ModalState) -> Void
     private let networkManager: NetworkManager
     private let requestTransitionToResults: (Result<(APIImagesResponse, String), ISNetworkError>) -> Void
     private var apiSubscription: AnyCancellable?
 
     init(
         networkManager: NetworkManager,
-        spawnTypeChoiseTable: @escaping (UIViewController) -> Void,
+        manageChoiceTable: @escaping (MainCoordinator.ModalState) -> Void,
         coordinatorNotifier: @escaping (Result<(APIImagesResponse, String), ISNetworkError>) -> Void
     ) {
         self.networkManager = networkManager
-        self.spawnTypeChoiseTable = spawnTypeChoiseTable
+        self.manageChoiceTable = manageChoiceTable
         requestTransitionToResults = coordinatorNotifier
     }
 

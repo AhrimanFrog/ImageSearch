@@ -19,9 +19,7 @@ class ScreenFactory {
     private func titleScreen() -> TitleSearchScreen {
         let titleViewModel = TitleSearchViewModel(
             networkManager: networkManager,
-            spawnTypeChoiseTable: { [weak self] controller in
-                self?.navigationHandler?.navigationController.present(controller, animated: true, completion: nil)
-            },
+            manageChoiceTable: { [weak self] newState in self?.navigationHandler?.modalController(toState: newState) },
             coordinatorNotifier: { [weak self] result in
                 switch result {
                 case let .success((response, request)):
@@ -57,6 +55,6 @@ class ScreenFactory {
     }
 
     private func zoomScreen(image: UIImage?) -> ZoomScreen {
-        return ZoomScreen(image: image) { [weak self] in self?.navigationHandler?.dismissScreen() }
+        return ZoomScreen(image: image) { [weak self] in self?.navigationHandler?.modalController(toState: .dismiss) }
     }
 }

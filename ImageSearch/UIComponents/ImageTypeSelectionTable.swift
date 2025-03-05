@@ -8,7 +8,6 @@ class ImageTypeSelectionTable: UITableViewController {
         self.preferences = preferences
         allowedChoises = Preferences.ImageType.allCases.filter { $0 != preferences.imageType.value }
         super.init(style: .plain)
-        modalPresentationStyle = .popover
         tableView.register(ISTypeCell.self, forCellReuseIdentifier: ISTypeCell.reuseID)
     }
 
