@@ -1,13 +1,11 @@
 import UIKit
 
-class ISSearchField: UITextField {
+class ISSearchField: ISTextField {
     private let padding = UIEdgeInsets(top: 0, left: 45, bottom: 0, right: 5)
 
-    init() {
-        super.init(frame: .zero)
+    override init() {
+        super.init()
         configure()
-        addDoneButton()
-        setColor()
         registerForTraitChanges([UITraitActiveAppearance.self], action: #selector(setColor))
     }
 
@@ -43,10 +41,6 @@ class ISSearchField: UITextField {
         )
     }
 
-    @objc func setColor() {
-        layer.backgroundColor = UIColor.systemGray6.cgColor
-    }
-
     private func configure() {
         placeholder = "Search images, vectors and more"
         layer.cornerRadius = 8
@@ -54,21 +48,5 @@ class ISSearchField: UITextField {
         let imageView = UIImageView(image: UIImage(sfImage: .search))
         imageView.tintColor = .systemGray
         leftView = imageView
-    }
-
-    private func addDoneButton() {
-        let doneButton = UIBarButtonItem(
-            systemItem: .done, primaryAction: UIAction { [weak self] _ in self?.resignFirstResponder() }
-        )
-        let toolbar = UIToolbar(frame: .init(x: 0, y: 0, width: 100, height: 50))
-        toolbar.items = [doneButton]
-        inputAccessoryView = toolbar
-    }
-}
-
-extension ISSearchField: UITextFieldDelegate {
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
-        return true
     }
 }

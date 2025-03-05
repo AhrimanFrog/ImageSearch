@@ -32,6 +32,11 @@ class ISDropDownSearchField: UIView {
         buttonConfig.imagePadding = 6
         buttonConfig.baseForegroundColor = .label
         buttonConfig.baseBackgroundColor = .systemGray6
+        buttonConfig.titleTextAttributesTransformer = .init { incoming in
+            var outgoing = incoming
+            outgoing.font = .openSans(ofSize: 14, style: .light)
+            return outgoing
+        }
         currentTypeButton.configuration = buttonConfig
         currentTypeButton.layer.cornerRadius = 8
         setText(from: .all)

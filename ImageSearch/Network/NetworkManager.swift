@@ -62,9 +62,7 @@ class NetworkManager {
             URLQueryItem(name: "q", value: query.formattedForQuery),
             URLQueryItem(name: "page", value: String(page))
         ]
-        let formattedPreferences = preferences.asDict.compactMap {
-            $0.value == nil ? nil : URLQueryItem(name: $0.key, value: $0.value)
-        }
+        let formattedPreferences = preferences.asDict.map { URLQueryItem(name: $0.key, value: $0.value) }
         urlComponents?.queryItems = baseQueryItems + formattedPreferences
         return urlComponents?.url
     }
