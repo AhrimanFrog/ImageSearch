@@ -89,7 +89,3 @@ class PreferencesScreen: UIView, Screen {
         }
     }
 }
-
-#Preview {
-    HostingController(contentView: PreferencesScreen())
-}

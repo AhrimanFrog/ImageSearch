@@ -11,6 +11,11 @@ class ImageTypeSelectionTable: UITableViewController {
         tableView.register(ISTypeCell.self, forCellReuseIdentifier: ISTypeCell.reuseID)
     }
 
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        preferredContentSize = tableView.contentSize
+    }
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

@@ -15,7 +15,7 @@ class ISTypeCell: UITableViewCell, ReuseIdentifiable {
 
     private func configure() {
         addSubview(label)
-        label.font = .openSans(ofSize: 14, style: .light)
+        label.font = .openSans(ofSize: 18, style: .medium)
         label.textAlignment = .center
         label.snp.makeConstraints { $0.edges.equalToSuperview() }
     }
