@@ -42,6 +42,10 @@ final class SearchResultsScreen: ISScreen<SearchResultsViewModel> {
             UIAction { [weak self] _ in self?.viewModel.changeState(.success(.start)) },
             for: .touchUpInside
         )
+        header.preferencesButton.addAction(
+            UIAction { [weak self]  _ in self?.viewModel.changeState(.success(.preferences)) },
+            for: .touchUpInside
+        )
         header.searchField.addInputProcessor { [weak self] input in self?.viewModel.displayResults(of: input) }
     }
 
@@ -91,6 +95,7 @@ final class SearchResultsViewModel: ViewModel, DataProvider {
 
     struct Dependencies {
         let networkManager: NetworkManager
+        let preferences: Preferences
         let initialResults: APIImagesResponse
         var query: String
         let navigationHandler: NavigationHandler
@@ -125,7 +130,7 @@ final class SearchResultsViewModel: ViewModel, DataProvider {
     func fetchMoreResults() {
         guard images.value.count < total.value else { return }
         page += 1
-        dependencies.networkManager.getImages(query: query, page: page, userPreferences: Preferences())
+        dependencies.networkManager.getImages(query: query, page: page, userPreferences: dependencies.preferences)
             .sink { [weak self] result in
                 switch result {
                 case .success(let response): self?.images.value.append(contentsOf: response.hits)

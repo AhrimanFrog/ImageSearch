@@ -3,8 +3,8 @@ import UIKit
 class ISSearchField: ISTextField {
     private let padding = UIEdgeInsets(top: 0, left: 45, bottom: 0, right: 5)
 
-    override init() {
-        super.init()
+    init() {
+        super.init(keyboard: .all)
         configure()
         registerForTraitChanges([UITraitActiveAppearance.self], action: #selector(setColor))
     }

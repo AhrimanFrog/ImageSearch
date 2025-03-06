@@ -4,6 +4,7 @@ class ScreenFactory {
     weak var navigationHandler: MainCoordinator?
 
     private let networkManager = NetworkManager()
+    private let preferences = Preferences()
 
     func build(screen: MainCoordinator.Destination) -> UIViewController {
         let controller = switch screen {
@@ -11,6 +12,7 @@ class ScreenFactory {
         case let .results(response, request): HostingController(contentView: resultsScreen(response, request))
         case let .photo(mainImage, related): HostingController(contentView: photoScreen(mainImage, related))
         case let .zoom(image): HostingController(contentView: zoomScreen(image: image))
+        case .preferences: HostingController(contentView: preferencesScreen())
         }
         controller.isHeroEnabled = true
         return controller
@@ -19,6 +21,7 @@ class ScreenFactory {
     private func titleScreen() -> TitleSearchScreen {
         let titleViewModel = TitleSearchViewModel(
             networkManager: networkManager,
+            preferences: preferences,
             manageChoiceTable: { [weak self] newState in self?.navigationHandler?.modalController(toState: newState) },
             coordinatorNotifier: { [weak self] result in
                 switch result {
@@ -35,6 +38,7 @@ class ScreenFactory {
     private func resultsScreen(_ response: APIImagesResponse, _ request: String) -> SearchResultsScreen {
         let dependencies = SearchResultsViewModel.Dependencies(
             networkManager: networkManager,
+            preferences: preferences,
             initialResults: response,
             query: request,
             navigationHandler: { [weak self] in self?.navigationHandler?.recieveStateChange($0) },
@@ -46,6 +50,7 @@ class ScreenFactory {
     private func photoScreen(_ mainImage: ISImage, _ related: [ISImage]) -> PhotoScreen {
         let dependencies = PhotoScreenViewModel.Dependencies(
             networkManager: networkManager,
+            preferences: preferences,
             topImage: mainImage,
             related: related,
             navigationHandler: { [weak self] in self?.navigationHandler?.recieveStateChange($0) },
@@ -56,5 +61,11 @@ class ScreenFactory {
 
     private func zoomScreen(image: UIImage?) -> ZoomScreen {
         return ZoomScreen(image: image) { [weak self] in self?.navigationHandler?.modalController(toState: .dismiss) }
+    }
+
+    private func preferencesScreen() -> PreferencesScreen {
+        return PreferencesScreen(preferences: preferences) { [weak self] in
+            self?.navigationHandler?.modalController(toState: .dismiss)
+        }
     }
 }

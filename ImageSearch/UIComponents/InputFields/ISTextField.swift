@@ -1,14 +1,21 @@
 import UIKit
 
 class ISTextField: UITextField {
-    init() {
+    enum KyeboardType {
+        case digitsOnly, all
+    }
+
+    init(keyboard: KyeboardType = .all) {
         super.init(frame: .zero)
         addDoneButton()
         setColor()
         delegate = self
         layer.cornerRadius = 8
         registerForTraitChanges([UITraitActiveAppearance.self], action: #selector(setColor))
+        keyboardType = keyboard == .digitsOnly ? .numberPad : .default
     }
+
+    var input: String { text ?? "" }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

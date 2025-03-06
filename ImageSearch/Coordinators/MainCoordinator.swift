@@ -6,6 +6,7 @@ class MainCoordinator: Coordinator {
         case results(APIImagesResponse, String)
         case photo(ISImage, [ISImage])
         case zoom(UIImage?)
+        case preferences
     }
 
     enum ModalState {
@@ -40,7 +41,7 @@ class MainCoordinator: Coordinator {
         switch destination {
         case .start:
             navigationController.popToRootViewController(animated: true)
-        case .zoom:
+        case .zoom, .preferences:
             let screen = screenFactory.build(screen: destination)
             screen.modalPresentationStyle = .fullScreen
             navigationController.present(screen, animated: true)

@@ -45,7 +45,10 @@ class PhotoScreen: ISScreen<PhotoScreenViewModel> {
             UIAction { [weak self] _ in self?.viewModel.returnToHomeScreen() },
             for: .touchUpInside
         )
-
+        header.preferencesButton.addAction(
+            UIAction { [weak self] _ in self?.viewModel.openPreferences() },
+            for: .touchUpInside
+        )
         header.searchField.addInputProcessor { [weak self] input in self?.viewModel.openResultsOfQuery(input) }
 
         photoInfoBlock.downloadButton.addAction(
@@ -136,6 +139,7 @@ class PhotoScreen: ISScreen<PhotoScreenViewModel> {
 class PhotoScreenViewModel: ViewModel, DataProvider {
     struct Dependencies {
         let networkManager: NetworkManager
+        let preferences: Preferences
         let topImage: ISImage
         let related: [ISImage]
         let navigationHandler: NavigationHandler
@@ -146,7 +150,7 @@ class PhotoScreenViewModel: ViewModel, DataProvider {
     let topImage: CurrentValueSubject<ISImage, Never>
     let share: (UIImage, String) -> Void
     private let navigationHandler: NavigationHandler
-
+    private let preferences: Preferences
     private let networkManager: NetworkManager
     private var disposalBag = Set<AnyCancellable>()
 
@@ -156,6 +160,7 @@ class PhotoScreenViewModel: ViewModel, DataProvider {
         networkManager = dependencies.networkManager
         navigationHandler = dependencies.navigationHandler
         share = dependencies.share
+        preferences = dependencies.preferences
     }
 
     func returnToHomeScreen() {
@@ -164,7 +169,7 @@ class PhotoScreenViewModel: ViewModel, DataProvider {
 
     func openPhotoScreen(forPhoto photo: ISImage) {
         guard let tag = photo.formattedTags.first else { return }
-        networkManager.getImages(query: tag, page: 1, userPreferences: .shared)
+        networkManager.getImages(query: tag, page: 1, userPreferences: preferences)
             .sink { [weak self] result in
                 switch result {
                 case .success(let response): self?.images.send(response.hits)
@@ -186,7 +191,7 @@ class PhotoScreenViewModel: ViewModel, DataProvider {
 
     func openResultsOfQuery(_ query: String) {
         networkManager
-            .getImages(query: query, page: 1, userPreferences: .shared)
+            .getImages(query: query, page: 1, userPreferences: preferences)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] result in
                 switch result {
@@ -199,6 +204,10 @@ class PhotoScreenViewModel: ViewModel, DataProvider {
 
     func zoomPhoto(_ photo: UIImage?) {
         navigationHandler(.success(.zoom(photo)))
+    }
+
+    func openPreferences() {
+        navigationHandler(.success(.preferences))
     }
 
     func downloadImageToGallery(_ image: UIImage, successfulSaveHandler: @escaping () -> Void) {

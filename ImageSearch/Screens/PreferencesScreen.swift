@@ -6,19 +6,46 @@ class PreferencesScreen: UIView, Screen {
     private let imageTypePicker = ISPickerLabel(frame: .zero)
     private let orientationPicker = ISPickerLabel(frame: .zero)
     private let minWidthLabel = ISSettingLabel()
-    private let minWidthInput = ISTextField()
+    private let minWidthInput = ISTextField(keyboard: .digitsOnly)
     private let minHeightLabel = ISSettingLabel()
-    private let minHeightInput = ISTextField()
+    private let minHeightInput = ISTextField(keyboard: .digitsOnly)
     private let safeSerach = UISwitch()
     private let safeSearchLabel = ISSettingLabel()
     private let orderPicker = ISPickerLabel(frame: .zero)
 
+    private let preferences: Preferences
+    private let completion: () -> Void
+
+    init(preferences: Preferences, completion: @escaping () -> Void) {
+        self.preferences = preferences
+        self.completion = completion
+        super.init(frame: .zero)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     func viewDidLoad() {
         configure()
         setConstraints()
+        bind()
+    }
+
+    private func savePreferences() {
+        preferences.safeSerach = safeSerach.isOn
+        preferences.minHeight = Int(minHeightInput.input) ?? 0
+        preferences.minWidth = Int(minWidthInput.input) ?? 0
+        completion()
+    }
+
+    private func bind() {
+        headerBlock.closeButton.addAction(UIAction { [weak self] _ in self?.completion() }, for: .touchUpInside)
+        headerBlock.doneButton.addAction(UIAction { [weak self] _ in self?.savePreferences() }, for: .touchUpInside)
     }
 
     private func configure() {
+        backgroundColor = .systemBackground
         imageTypePicker.text = "Image Type"
         orientationPicker.text = "Orientation"
         minWidthInput.placeholder = "0"

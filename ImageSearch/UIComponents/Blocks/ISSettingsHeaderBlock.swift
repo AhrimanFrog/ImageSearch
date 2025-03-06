@@ -2,8 +2,8 @@ import UIKit
 import SnapKit
 
 class ISSettingsHeaderBlock: UIView {
-    private let closeButton = ISGreyButton(image: .init(sfImage: .close))
-    private let doneButton = ISGreyButton(image: .init(sfImage: .save))
+    let closeButton = ISGreyButton(image: .init(sfImage: .close))
+    let doneButton = ISGreyButton(image: .init(sfImage: .save))
     private let titleLabel = UILabel()
     private let bottonLine = UIView()
 
