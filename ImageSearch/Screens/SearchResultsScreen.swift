@@ -142,7 +142,7 @@ final class SearchResultsViewModel: ViewModel, DataProvider {
 
     func displayResults(of request: String) {
         dependencies.networkManager
-            .getImages(query: request, page: 1, userPreferences: .shared)
+            .getImages(query: request, page: 1, userPreferences: dependencies.preferences)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] result in
                 switch result {

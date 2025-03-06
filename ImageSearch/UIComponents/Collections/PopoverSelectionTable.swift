@@ -1,12 +1,15 @@
 import UIKit
+import Combine
 
-class ImageTypeSelectionTable: UITableViewController {
-    private let preferences: Preferences
-    private let allowedChoises: [Preferences.ImageType]
+typealias Enumerable = CaseIterable & Equatable & CustomStringConvertible
 
-    init(preferences: Preferences) {
-        self.preferences = preferences
-        allowedChoises = Preferences.ImageType.allCases.filter { $0 != preferences.imageType.value }
+class PopoverSelectionTable<Value: Enumerable>: UITableViewController {
+    private let publisher: CurrentValueSubject<Value, Never>
+    private let allowedChoises: [Value]
+
+    init(publisher: CurrentValueSubject<Value, Never>) {
+        self.publisher = publisher
+        allowedChoises = Value.allCases.filter { $0 != publisher.value }
         super.init(style: .plain)
         tableView.register(ISTypeCell.self, forCellReuseIdentifier: ISTypeCell.reuseID)
     }
@@ -28,11 +31,11 @@ class ImageTypeSelectionTable: UITableViewController {
         let cell = tableView.dequeueReusableCell(
             withIdentifier: ISTypeCell.reuseID, for: indexPath
         ) as! ISTypeCell // swiftlint:disable:this force_cast
-        cell.label.text = allowedChoises[indexPath.row].rawValue
+        cell.label.text = allowedChoises[indexPath.row].description
         return cell
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        preferences.imageType.send(allowedChoises[indexPath.row])
+        publisher.send(allowedChoises[indexPath.row])
     }
 }

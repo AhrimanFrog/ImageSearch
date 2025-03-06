@@ -3,6 +3,8 @@ import SnapKit
 import Hero
 
 class ZoomScreen: UIView, Screen {
+    weak var owner: UIViewController?
+
     private let photoView = UIImageView()
     private let scrollView = UIScrollView()
     private let closeButton = ISGreyButton(image: UIImage(sfImage: .close))

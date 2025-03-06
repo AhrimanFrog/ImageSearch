@@ -33,17 +33,18 @@ final class TitleSearchScreen: ISScreen<TitleSearchViewModel> {
         }
         searchField.currentTypeButton.addAction(
             UIAction { [weak self] _ in
-                let tableController = ImageTypeSelectionTable(preferences: self?.viewModel.preferences ?? .shared)
+                guard let self else { return }
+                let tableController = PopoverSelectionTable(publisher: viewModel.preferences.imageType)
                 tableController.modalPresentationStyle = .popover
                 if let popoverController = tableController.popoverPresentationController {
                     tableController.preferredContentSize = tableController.view.systemLayoutSizeFitting(
                         UIView.layoutFittingCompressedSize
                     )
                     popoverController.delegate = PopoverPresentationDelegate.shared
-                    popoverController.sourceView = self?.searchField.currentTypeButton
+                    popoverController.sourceView = searchField.currentTypeButton
                     popoverController.permittedArrowDirections = [.up, .down]
                 }
-                self?.viewModel.manageChoiceTable(.present(tableController))
+                viewModel.manageChoiceTable(.present(tableController))
             },
             for: .touchUpInside
         )

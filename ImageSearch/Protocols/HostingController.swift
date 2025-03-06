@@ -6,6 +6,7 @@ class HostingController<ContentView: Screen>: UIViewController {
     init(contentView: ContentView) {
         self.contentView = contentView
         super.init(nibName: nil, bundle: nil)
+        contentView.owner = self
     }
 
     required init?(coder: NSCoder) {

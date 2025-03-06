@@ -1,7 +1,10 @@
 import UIKit
 import SnapKit
+import Combine
 
 class PreferencesScreen: UIView, Screen {
+    weak var owner: UIViewController?
+
     private let headerBlock = ISSettingsHeaderBlock()
     private let imageTypePicker = ISPickerLabel(frame: .zero)
     private let orientationPicker = ISPickerLabel(frame: .zero)
@@ -13,11 +16,15 @@ class PreferencesScreen: UIView, Screen {
     private let safeSearchLabel = ISSettingLabel()
     private let orderPicker = ISPickerLabel(frame: .zero)
 
-    private let preferences: Preferences
+    private let originalPreferences: Preferences
+    private let draftPreferences: Preferences
     private let completion: () -> Void
 
+    private var changesSubscriptions = Set<AnyCancellable>()
+
     init(preferences: Preferences, completion: @escaping () -> Void) {
-        self.preferences = preferences
+        originalPreferences = preferences
+        draftPreferences = preferences.copy()
         self.completion = completion
         super.init(frame: .zero)
     }
@@ -33,24 +40,83 @@ class PreferencesScreen: UIView, Screen {
     }
 
     private func savePreferences() {
-        preferences.safeSerach = safeSerach.isOn
-        preferences.minHeight = Int(minHeightInput.input) ?? 0
-        preferences.minWidth = Int(minWidthInput.input) ?? 0
+        originalPreferences.safeSerach = safeSerach.isOn
+        originalPreferences.minHeight = Int(minHeightInput.input) ?? 0
+        originalPreferences.minWidth = Int(minWidthInput.input) ?? 0
+        originalPreferences.imageType.value = draftPreferences.imageType.value
+        originalPreferences.orientation.value = draftPreferences.orientation.value
+        originalPreferences.order.value = draftPreferences.order.value
         completion()
     }
 
     private func bind() {
         headerBlock.closeButton.addAction(UIAction { [weak self] _ in self?.completion() }, for: .touchUpInside)
         headerBlock.doneButton.addAction(UIAction { [weak self] _ in self?.savePreferences() }, for: .touchUpInside)
+        imageTypePicker.addAction(
+            UIAction { [weak self] _ in
+                guard let self else { return }
+                spawnTable(forValue: draftPreferences.imageType, ofComponent: imageTypePicker)
+            },
+            for: .touchUpInside
+        )
+        draftPreferences.imageType
+            .sink { [weak self] in
+                self?.imageTypePicker.stateLabel.text = $0.description
+                self?.owner?.dismiss(animated: true)
+            }
+            .store(in: &changesSubscriptions)
+        orientationPicker.addAction(
+            UIAction { [weak self] _ in
+                guard let self else { return }
+                spawnTable(forValue: draftPreferences.orientation, ofComponent: orientationPicker)
+            },
+            for: .touchUpInside
+        )
+        draftPreferences.orientation
+            .sink { [weak self] in
+                self?.orientationPicker.stateLabel.text = $0.description
+                self?.owner?.dismiss(animated: true)
+            }
+            .store(in: &changesSubscriptions)
+        orderPicker.addAction(
+            UIAction { [weak self] _ in
+                guard let self else { return }
+                spawnTable(forValue: draftPreferences.order, ofComponent: orderPicker)
+            },
+            for: .touchUpInside
+        )
+        draftPreferences.order
+            .sink { [weak self] in
+                self?.orderPicker.stateLabel.text = $0.description
+                self?.owner?.dismiss(animated: true)
+            }
+            .store(in: &changesSubscriptions)
+    }
+
+    private func spawnTable<Val: Enumerable>(
+        forValue publisher: CurrentValueSubject<Val, Never>,
+        ofComponent component: ISPickerLabel
+    ) {
+        let tableController = PopoverSelectionTable(publisher: publisher)
+        tableController.modalPresentationStyle = .popover
+        if let popoverController = tableController.popoverPresentationController {
+            tableController.preferredContentSize = tableController.view.systemLayoutSizeFitting(
+                UIView.layoutFittingCompressedSize
+            )
+            popoverController.delegate = PopoverPresentationDelegate.shared
+            popoverController.sourceView = component
+            popoverController.permittedArrowDirections = [.up, .down]
+        }
+        owner?.present(tableController, animated: true)
     }
 
     private func configure() {
         backgroundColor = .systemBackground
-        imageTypePicker.text = "Image Type"
-        orientationPicker.text = "Orientation"
+        imageTypePicker.label.text = "Image Type"
+        orientationPicker.label.text = "Orientation"
         minWidthInput.placeholder = "0"
         minHeightInput.placeholder = "0"
-        orderPicker.text = "Order"
+        orderPicker.label.text = "Order"
         safeSerach.onTintColor = .customPurple
         minWidthLabel.text = "Minimal Width"
         minHeightLabel.text = "Minimal Height"

@@ -2,10 +2,12 @@ import UIKit
 
 protocol Screen: UIView {
     func viewDidLoad()
+    var owner: UIViewController? { get set }
 }
 
 class ISScreen<VM: ViewModel>: UIView, Screen {
     private(set) var viewModel: VM
+    weak var owner: UIViewController?
 
     init(viewModel: VM) {
         self.viewModel = viewModel
