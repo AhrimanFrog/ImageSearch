@@ -4,6 +4,7 @@ import Combine
 import Hero
 
 class PhotoScreen: ISScreen<PhotoScreenViewModel> {
+    private let topBanner = UIView()
     private let photoSavedView = SaveSuccessfulView()
     private let header = ISHeaderBlock()
     private let photoImage = UIImageView()
@@ -77,6 +78,7 @@ class PhotoScreen: ISScreen<PhotoScreenViewModel> {
 
     private func configure() {
         backgroundColor = .systemGray5
+        topBanner.backgroundColor = .systemBackground
         relatedLabel.text = "Related"
         photoImage.contentMode = .scaleAspectFit
         photoImage.heroID = "photo"
@@ -91,13 +93,19 @@ class PhotoScreen: ISScreen<PhotoScreenViewModel> {
             photoInfoBlock,
             relatedLabel,
             relatedCollection,
-            photoSavedView
+            photoSavedView,
+            topBanner
         )
 
         header.snp.makeConstraints { make in
-            make.top.equalToSuperview()
+            make.top.equalTo(safeAreaLayoutGuide)
             make.horizontalEdges.equalToSuperview()
-            make.height.equalTo(140)
+            make.height.lessThanOrEqualTo(60)
+        }
+
+        topBanner.snp.makeConstraints { make in
+            make.top.horizontalEdges.equalToSuperview()
+            make.bottom.equalTo(header.snp.top)
         }
 
         photoImage.snp.makeConstraints { make in

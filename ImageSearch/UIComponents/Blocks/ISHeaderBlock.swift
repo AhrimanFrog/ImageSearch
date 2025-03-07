@@ -29,19 +29,19 @@ class ISHeaderBlock: UIView {
 
         homeButton.snp.makeConstraints { make in
             make.width.height.lessThanOrEqualTo(52)
-            make.leading.bottom.equalToSuperview().inset(15)
+            make.leading.bottom.equalToSuperview().inset(6)
         }
 
         preferencesButton.snp.makeConstraints { make in
             make.width.height.equalTo(homeButton)
-            make.trailing.bottom.equalToSuperview().inset(15)
+            make.trailing.bottom.equalToSuperview().inset(6)
         }
 
         searchField.snp.makeConstraints { make in
             make.height.equalTo(52)
             make.leading.equalTo(homeButton.snp.trailing).inset(-16)
             make.trailing.equalTo(preferencesButton.snp.leading).inset(-8)
-            make.bottom.equalToSuperview().inset(15)
+            make.bottom.equalToSuperview().inset(6)
         }
 
         bottonLine.snp.makeConstraints { make in

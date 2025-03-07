@@ -3,6 +3,7 @@ import SnapKit
 import Combine
 
 final class SearchResultsScreen: ISScreen<SearchResultsViewModel> {
+    private let topBanner = UIView()
     private let header = ISHeaderBlock()
     private let totalResultsLabel = ISInfoLabel(frame: .zero)
     private let relatedLabel = ISCommentLabel(frame: .zero)
@@ -32,6 +33,7 @@ final class SearchResultsScreen: ISScreen<SearchResultsViewModel> {
 
     private func configure() {
         backgroundColor = .systemGray5
+        topBanner.backgroundColor = .systemBackground
         totalResultsLabel.text = "\(viewModel.total.value) Free Images"
         relatedLabel.text = "Related"
         header.searchField.text = viewModel.query
@@ -56,14 +58,17 @@ final class SearchResultsScreen: ISScreen<SearchResultsViewModel> {
     }
 
     private func setConstraints() {
-        addSubviews(header, totalResultsLabel, relatedLabel, relatedCollection, resultsCollection)
+        addSubviews(header, totalResultsLabel, relatedLabel, relatedCollection, resultsCollection, topBanner)
 
         header.snp.makeConstraints { make in
-            make.top.equalToSuperview()
+            make.top.equalTo(safeAreaLayoutGuide.snp.top)
             make.horizontalEdges.equalToSuperview()
-            make.height.equalTo(140)
+            make.height.lessThanOrEqualTo(60)
         }
-
+        topBanner.snp.makeConstraints { make in
+            make.top.horizontalEdges.equalToSuperview()
+            make.bottom.equalTo(header.snp.top)
+        }
         totalResultsLabel.snp.makeConstraints { make in
             make.horizontalEdges.equalToSuperview().inset(16)
             make.top.equalTo(header.snp.bottom).inset(-10)
