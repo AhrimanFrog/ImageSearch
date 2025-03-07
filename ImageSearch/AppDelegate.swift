@@ -1,10 +1,12 @@
 import UIKit
+import IQKeyboardManagerSwift
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(
         _: UIApplication, didFinishLaunchingWithOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
+        IQKeyboardManager.shared.isEnabled = true
         return true
     }
 
