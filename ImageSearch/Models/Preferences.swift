@@ -1,7 +1,11 @@
 import Combine
 import Foundation
 
-class Preferences {
+struct Preferences: Equatable {
+    static func == (lhs: Preferences, rhs: Preferences) -> Bool {
+        return lhs.asDict == rhs.asDict
+    }
+
     enum ImageType: String, CaseIterable, CustomStringConvertible {
         case all, photo, illustration, vector
 
@@ -36,16 +40,5 @@ class Preferences {
             "order": order.value.rawValue,
             "safesearch": String(safeSerach)
         ]
-    }
-
-    func copy() -> Preferences {
-        let copy = Preferences()
-        copy.imageType.value = imageType.value
-        copy.orientation.value = orientation.value
-        copy.minWidth = minWidth
-        copy.minHeight = minHeight
-        copy.safeSerach = safeSerach
-        copy.order.value = order.value
-        return copy
     }
 }

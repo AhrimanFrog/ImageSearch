@@ -27,14 +27,14 @@ final class TitleSearchScreen: ISScreen<TitleSearchViewModel> {
             },
             for: .touchUpInside
         )
-        preferencesSubscription = viewModel.preferences.imageType.sink { [weak self] newValue in
+        preferencesSubscription = viewModel.preferences.value.imageType.sink { [weak self] newValue in
             self?.searchField.currentTypeButton.setTitle(newValue.rawValue.capitalized, for: .normal)
             self?.viewModel.manageChoiceTable(.dismiss)
         }
         searchField.currentTypeButton.addAction(
             UIAction { [weak self] _ in
                 guard let self else { return }
-                let tableController = PopoverSelectionTable(publisher: viewModel.preferences.imageType)
+                let tableController = PopoverSelectionTable(publisher: viewModel.preferences.value.imageType)
                 tableController.modalPresentationStyle = .popover
                 if let popoverController = tableController.popoverPresentationController {
                     tableController.preferredContentSize = tableController.view.systemLayoutSizeFitting(
@@ -80,14 +80,14 @@ final class TitleSearchScreen: ISScreen<TitleSearchViewModel> {
 
 final class TitleSearchViewModel: ViewModel {
     let manageChoiceTable: (MainCoordinator.ModalState) -> Void
-    let preferences: Preferences
+    let preferences: CurrentValueSubject<Preferences, Never>
     private let networkManager: NetworkManager
     private let requestTransitionToResults: (Result<(APIImagesResponse, String), ISNetworkError>) -> Void
     private var apiSubscription: AnyCancellable?
 
     init(
         networkManager: NetworkManager,
-        preferences: Preferences,
+        preferences: CurrentValueSubject<Preferences, Never>,
         manageChoiceTable: @escaping (MainCoordinator.ModalState) -> Void,
         coordinatorNotifier: @escaping (Result<(APIImagesResponse, String), ISNetworkError>) -> Void
     ) {
@@ -99,7 +99,7 @@ final class TitleSearchViewModel: ViewModel {
 
     func transitToResults(of request: String) {
         apiSubscription = networkManager
-            .getImages(query: request, page: 1, userPreferences: preferences)
+            .getImages(query: request, page: 1, userPreferences: preferences.value)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] result in
                 switch result {

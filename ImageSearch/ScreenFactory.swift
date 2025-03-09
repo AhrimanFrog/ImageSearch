@@ -1,10 +1,11 @@
 import UIKit
+import Combine
 
 class ScreenFactory {
     weak var navigationHandler: MainCoordinator?
 
     private let networkManager = NetworkManager()
-    private let preferences = Preferences()
+    private let preferencesPublisher = CurrentValueSubject<Preferences, Never>(.init())
 
     func build(screen: MainCoordinator.Destination) -> UIViewController {
         let controller = switch screen {
@@ -21,7 +22,7 @@ class ScreenFactory {
     private func titleScreen() -> TitleSearchScreen {
         let titleViewModel = TitleSearchViewModel(
             networkManager: networkManager,
-            preferences: preferences,
+            preferences: preferencesPublisher,
             manageChoiceTable: { [weak self] newState in self?.navigationHandler?.modalController(toState: newState) },
             coordinatorNotifier: { [weak self] result in
                 switch result {
@@ -38,7 +39,7 @@ class ScreenFactory {
     private func resultsScreen(_ response: APIImagesResponse, _ request: String) -> SearchResultsScreen {
         let dependencies = SearchResultsViewModel.Dependencies(
             networkManager: networkManager,
-            preferences: preferences,
+            preferences: preferencesPublisher,
             initialResults: response,
             query: request,
             navigationHandler: { [weak self] in self?.navigationHandler?.recieveStateChange($0) },
@@ -50,7 +51,7 @@ class ScreenFactory {
     private func photoScreen(_ mainImage: ISImage, _ related: [ISImage]) -> PhotoScreen {
         let dependencies = PhotoScreenViewModel.Dependencies(
             networkManager: networkManager,
-            preferences: preferences,
+            preferences: preferencesPublisher,
             topImage: mainImage,
             related: related,
             navigationHandler: { [weak self] in self?.navigationHandler?.recieveStateChange($0) },
@@ -64,7 +65,7 @@ class ScreenFactory {
     }
 
     private func preferencesScreen() -> PreferencesScreen {
-        return PreferencesScreen(preferences: preferences) { [weak self] in
+        return PreferencesScreen(preferences: preferencesPublisher) { [weak self] in
             self?.navigationHandler?.modalController(toState: .dismiss)
         }
     }

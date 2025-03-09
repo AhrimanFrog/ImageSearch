@@ -100,7 +100,7 @@ final class SearchResultsViewModel: ViewModel, DataProvider {
 
     struct Dependencies {
         let networkManager: NetworkManager
-        let preferences: Preferences
+        let preferences: CurrentValueSubject<Preferences, Never>
         let initialResults: APIImagesResponse
         var query: String
         let navigationHandler: NavigationHandler
@@ -135,7 +135,11 @@ final class SearchResultsViewModel: ViewModel, DataProvider {
     func fetchMoreResults() {
         guard images.value.count < total.value else { return }
         page += 1
-        dependencies.networkManager.getImages(query: query, page: page, userPreferences: dependencies.preferences)
+        dependencies.networkManager.getImages(
+            query: query,
+            page: page,
+            userPreferences: dependencies.preferences.value
+        )
             .sink { [weak self] result in
                 switch result {
                 case .success(let response): self?.images.value.append(contentsOf: response.hits)
@@ -147,7 +151,7 @@ final class SearchResultsViewModel: ViewModel, DataProvider {
 
     func displayResults(of request: String) {
         dependencies.networkManager
-            .getImages(query: request, page: 1, userPreferences: dependencies.preferences)
+            .getImages(query: request, page: 1, userPreferences: dependencies.preferences.value)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] result in
                 switch result {

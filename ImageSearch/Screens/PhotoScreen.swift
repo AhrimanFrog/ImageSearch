@@ -147,7 +147,7 @@ class PhotoScreen: ISScreen<PhotoScreenViewModel> {
 class PhotoScreenViewModel: ViewModel, DataProvider {
     struct Dependencies {
         let networkManager: NetworkManager
-        let preferences: Preferences
+        let preferences: CurrentValueSubject<Preferences, Never>
         let topImage: ISImage
         let related: [ISImage]
         let navigationHandler: NavigationHandler
@@ -158,7 +158,7 @@ class PhotoScreenViewModel: ViewModel, DataProvider {
     let topImage: CurrentValueSubject<ISImage, Never>
     let share: (UIImage, String) -> Void
     private let navigationHandler: NavigationHandler
-    private let preferences: Preferences
+    private let preferences: CurrentValueSubject<Preferences, Never>
     private let networkManager: NetworkManager
     private var disposalBag = Set<AnyCancellable>()
 
@@ -177,7 +177,7 @@ class PhotoScreenViewModel: ViewModel, DataProvider {
 
     func openPhotoScreen(forPhoto photo: ISImage) {
         guard let tag = photo.formattedTags.first else { return }
-        networkManager.getImages(query: tag, page: 1, userPreferences: preferences)
+        networkManager.getImages(query: tag, page: 1, userPreferences: preferences.value)
             .sink { [weak self] result in
                 switch result {
                 case .success(let response): self?.images.send(response.hits)
@@ -199,7 +199,7 @@ class PhotoScreenViewModel: ViewModel, DataProvider {
 
     func openResultsOfQuery(_ query: String) {
         networkManager
-            .getImages(query: query, page: 1, userPreferences: preferences)
+            .getImages(query: query, page: 1, userPreferences: preferences.value)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] result in
                 switch result {

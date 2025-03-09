@@ -16,15 +16,15 @@ class PreferencesScreen: UIView, Screen {
     private let safeSearchLabel = ISSettingLabel()
     private let orderPicker = ISPickerLabel(frame: .zero)
 
-    private let originalPreferences: Preferences
-    private let draftPreferences: Preferences
+    private let originalPreferences: CurrentValueSubject<Preferences, Never>
+    private let draftPreferences: CurrentValueSubject<Preferences, Never>
     private let completion: () -> Void
 
     private var changesSubscriptions = Set<AnyCancellable>()
 
-    init(preferences: Preferences, completion: @escaping () -> Void) {
+    init(preferences: CurrentValueSubject<Preferences, Never>, completion: @escaping () -> Void) {
         originalPreferences = preferences
-        draftPreferences = preferences.copy()
+        draftPreferences = .init(preferences.value)
         self.completion = completion
         super.init(frame: .zero)
     }
@@ -40,12 +40,7 @@ class PreferencesScreen: UIView, Screen {
     }
 
     private func savePreferences() {
-        originalPreferences.safeSerach = safeSerach.isOn
-        originalPreferences.minHeight = Int(minHeightInput.input) ?? 0
-        originalPreferences.minWidth = Int(minWidthInput.input) ?? 0
-        originalPreferences.imageType.value = draftPreferences.imageType.value
-        originalPreferences.orientation.value = draftPreferences.orientation.value
-        originalPreferences.order.value = draftPreferences.order.value
+        originalPreferences.send(draftPreferences.value)
         completion()
     }
 
@@ -55,11 +50,11 @@ class PreferencesScreen: UIView, Screen {
         imageTypePicker.addAction(
             UIAction { [weak self] _ in
                 guard let self else { return }
-                spawnTable(forValue: draftPreferences.imageType, ofComponent: imageTypePicker)
+                spawnTable(forValue: draftPreferences.value.imageType, ofComponent: imageTypePicker)
             },
             for: .touchUpInside
         )
-        draftPreferences.imageType
+        draftPreferences.value.imageType
             .sink { [weak self] in
                 self?.imageTypePicker.stateLabel.text = $0.description
                 self?.owner?.dismiss(animated: true)
@@ -68,11 +63,11 @@ class PreferencesScreen: UIView, Screen {
         orientationPicker.addAction(
             UIAction { [weak self] _ in
                 guard let self else { return }
-                spawnTable(forValue: draftPreferences.orientation, ofComponent: orientationPicker)
+                spawnTable(forValue: draftPreferences.value.orientation, ofComponent: orientationPicker)
             },
             for: .touchUpInside
         )
-        draftPreferences.orientation
+        draftPreferences.value.orientation
             .sink { [weak self] in
                 self?.orientationPicker.stateLabel.text = $0.description
                 self?.owner?.dismiss(animated: true)
@@ -81,14 +76,20 @@ class PreferencesScreen: UIView, Screen {
         orderPicker.addAction(
             UIAction { [weak self] _ in
                 guard let self else { return }
-                spawnTable(forValue: draftPreferences.order, ofComponent: orderPicker)
+                spawnTable(forValue: draftPreferences.value.order, ofComponent: orderPicker)
             },
             for: .touchUpInside
         )
-        draftPreferences.order
+        draftPreferences.value.order
             .sink { [weak self] in
                 self?.orderPicker.stateLabel.text = $0.description
                 self?.owner?.dismiss(animated: true)
+            }
+            .store(in: &changesSubscriptions)
+        draftPreferences
+            .sink { [weak self] newValue in
+                guard let self else { return }
+                headerBlock.doneButton.isEnabled = newValue != originalPreferences.value
             }
             .store(in: &changesSubscriptions)
     }
