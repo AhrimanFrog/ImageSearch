@@ -4,7 +4,7 @@ import SnapKit
 class ISPhotoInfoBlock: UIView {
     let shareButton = ISButton(title: "Share", image: .share, style: .plain)
     private let licenceTitleLabel = UILabel()
-    private let licence = ISCommentLabel()
+    private let license = ISCommentLabel()
     let downloadButton = ISButton(title: "Download", image: .download)
     private let photoFormatLabel = UILabel()
 
@@ -28,13 +28,13 @@ class ISPhotoInfoBlock: UIView {
         licenceTitleLabel.text = "APP License"
         licenceTitleLabel.textColor = .customPurple
         licenceTitleLabel.font = .openSans(ofSize: 14, style: .light)
-        licence.text = "Free for commercial use\nNo attribution required"
-        licence.numberOfLines = 2
+        license.text = "Free for commercial use\nNo attribution required"
+        license.numberOfLines = 2
         photoFormatLabel.font = .openSans(ofSize: 14, style: .light)
     }
 
     private func setConstraints() {
-        addSubviews(shareButton, licenceTitleLabel, licence, downloadButton, photoFormatLabel)
+        addSubviews(shareButton, licenceTitleLabel, license, downloadButton, photoFormatLabel)
 
         licenceTitleLabel.snp.makeConstraints { make in
             make.leading.top.equalToSuperview().inset(16)
@@ -54,7 +54,7 @@ class ISPhotoInfoBlock: UIView {
             make.top.equalTo(photoFormatLabel.snp.bottom).inset(-16)
         }
 
-        licence.snp.makeConstraints { make in
+        license.snp.makeConstraints { make in
             make.leading.equalTo(licenceTitleLabel)
             make.bottom.equalTo(shareButton)
             make.top.equalTo(licenceTitleLabel.snp.bottom).inset(-5)
@@ -64,7 +64,7 @@ class ISPhotoInfoBlock: UIView {
         downloadButton.snp.makeConstraints { make in
             make.bottom.equalToSuperview().inset(26)
             make.horizontalEdges.equalToSuperview().inset(16)
-            make.top.equalTo(licence.snp.bottom).inset(-26)
+            make.top.equalTo(license.snp.bottom).inset(-26)
         }
     }
 }

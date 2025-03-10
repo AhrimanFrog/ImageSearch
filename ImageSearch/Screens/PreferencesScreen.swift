@@ -87,20 +87,20 @@ class PreferencesScreen: UIView, Screen {
             }
             .store(in: &changesSubscriptions)
         safeSerach.publisher(for: \.isOn)
-            .sink { [weak self] in self?.draftPreferences.value.safeSerach = $0 }
+            .sink { [weak self] in self?.draftPreferences.value.safeSerach.send($0) }
             .store(in: &changesSubscriptions)
         minWidthInput.publisher(for: \.text)
             .map { Int($0 ?? "0") ?? 0 }
-            .sink { [weak self] in self?.draftPreferences.value.minWidth = $0 }
+            .sink { [weak self] in self?.draftPreferences.value.minWidth.send($0) }
             .store(in: &changesSubscriptions)
         minHeightInput.publisher(for: \.text)
             .map { Int($0 ?? "0") ?? 0 }
-            .sink { [weak self] in self?.draftPreferences.value.minHeight = $0 }
+            .sink { [weak self] in self?.draftPreferences.value.minHeight.send($0) }
             .store(in: &changesSubscriptions)
-        draftPreferences
-            .sink { [weak self] newValue in
+        draftPreferences.value.changed
+            .sink { [weak self] in
                 guard let self else { return }
-                headerBlock.doneButton.isEnabled = newValue != originalPreferences.value
+                headerBlock.doneButton.isEnabled = draftPreferences.value != originalPreferences.value
             }
             .store(in: &changesSubscriptions)
     }
@@ -126,9 +126,9 @@ class PreferencesScreen: UIView, Screen {
         backgroundColor = .systemBackground
         imageTypePicker.label.text = "Image Type"
         orientationPicker.label.text = "Orientation"
-        minWidthInput.text = String(originalPreferences.value.minWidth)
-        minHeightInput.text = String(originalPreferences.value.minWidth)
-        safeSerach.isOn = originalPreferences.value.safeSerach
+        minWidthInput.text = String(originalPreferences.value.minWidth.value)
+        minHeightInput.text = String(originalPreferences.value.minHeight.value)
+        safeSerach.isOn = originalPreferences.value.safeSerach.value
         orderPicker.label.text = "Order"
         safeSerach.onTintColor = .customPurple
         minWidthLabel.text = "Minimal Width"

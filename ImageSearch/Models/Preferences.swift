@@ -26,19 +26,26 @@ struct Preferences: Equatable {
 
     let imageType = CurrentValueSubject<ImageType, Never>(.all)
     let orientation = CurrentValueSubject<Orientation, Never>(.all)
-    var minWidth: Int = 0
-    var minHeight: Int = 0
-    var safeSerach: Bool = false
+    var minWidth: CurrentValueSubject<Int, Never> = .init(0)
+    var minHeight: CurrentValueSubject<Int, Never> = .init(0)
+    var safeSerach: CurrentValueSubject<Bool, Never> = .init(false)
     let order = CurrentValueSubject<Order, Never>(.popular)
 
     var asDict: [String: String] {
         return [
             "image_type": imageType.value.rawValue,
             "orientation": orientation.value.rawValue,
-            "min_width": String(minWidth),
-            "min_height": String(minHeight),
+            "min_width": String(minWidth.value),
+            "min_height": String(minHeight.value),
             "order": order.value.rawValue,
-            "safesearch": String(safeSerach)
+            "safesearch": String(safeSerach.value)
         ]
+    }
+
+    var changed: AnyPublisher<Void, Never> {
+        return imageType
+            .void()
+            .merge(with: orientation.void(), minWidth.void(), minHeight.void(), safeSerach.void(), order.void())
+            .eraseToAnyPublisher()
     }
 }
