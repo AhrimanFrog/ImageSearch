@@ -5,7 +5,7 @@ import Combine
 final class TitleSearchScreen: ISScreen<TitleSearchViewModel> {
     private let title = ISTitleLabel()
     private let searchField = ISDropDownSearchField()
-    private let searchButton = ISButton(title: "Search", image: .init(sfImage: .search))
+    private let searchButton = ISButton(title: String(localized: "search"), image: .init(sfImage: .search))
     private let backgroundImage = UIImageView()
 
     private var preferencesSubscription: AnyCancellable?
@@ -29,7 +29,7 @@ final class TitleSearchScreen: ISScreen<TitleSearchViewModel> {
         )
         preferencesSubscription = viewModel.preferences.value.imageType.sink { [weak self] newValue in
             guard let host = self?.owner, host.isViewLoaded && self?.window != nil else { return }
-            self?.searchField.currentTypeButton.setTitle(newValue.rawValue.capitalized, for: .normal)
+            self?.searchField.currentTypeButton.setTitle(newValue.description, for: .normal)
             self?.owner?.dismiss(animated: true)
         }
         searchField.currentTypeButton.addAction(

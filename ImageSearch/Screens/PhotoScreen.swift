@@ -79,7 +79,7 @@ class PhotoScreen: ISScreen<PhotoScreenViewModel> {
     private func configure() {
         backgroundColor = .systemGray5
         topBanner.backgroundColor = .systemBackground
-        relatedLabel.text = "Related"
+        relatedLabel.text = String(localized: "related")
         photoImage.contentMode = .scaleAspectFit
         photoImage.heroID = "photo"
         photoSavedView.alpha = 0.0

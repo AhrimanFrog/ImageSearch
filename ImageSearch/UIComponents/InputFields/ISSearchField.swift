@@ -42,7 +42,7 @@ class ISSearchField: ISTextField {
     }
 
     private func configure() {
-        placeholder = "Search images, vectors and more"
+        placeholder = String(localized: "search_prompt")
         layer.cornerRadius = 8
         leftViewMode = .always
         let imageView = UIImageView(image: UIImage(sfImage: .search))

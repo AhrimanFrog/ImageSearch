@@ -11,7 +11,7 @@ class ISTitleLabel: UILabel {
     }
 
     private func configure() {
-        text = "Take your audience on a visual adventure"
+        text = String(localized: "title_label")
         lineBreakMode = .byTruncatingTail
         numberOfLines = 3
         textColor = .white

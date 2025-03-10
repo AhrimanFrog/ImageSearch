@@ -15,7 +15,7 @@ class ISSettingsHeaderBlock: UIView {
 
     private func configure() {
         backgroundColor = .systemGray3
-        titleLabel.text = "Settings"
+        titleLabel.text = String(localized: "settings")
         titleLabel.textAlignment = .center
         titleLabel.font = .openSans(ofSize: 24, style: .bold)
     }

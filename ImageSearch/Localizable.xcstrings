@@ -1,6 +1,58 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%lld_free_images" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Free Image"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Free Images"
+                }
+              }
+            }
+          }
+        },
+        "uk" : {
+          "variations" : {
+            "plural" : {
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Безкоштовних Зображення"
+                }
+              },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Безкоштовних зображень"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Безкоштовне Зображення"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Безкоштовних зображень"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "all" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -35,23 +87,6 @@
         }
       }
     },
-    "Bad response" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cannot convert data, try again"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Неможливо обробити дані. Спробуйте пізніше"
-          }
-        }
-      }
-    },
     "bad_request" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -69,6 +104,23 @@
         }
       }
     },
+    "bad_response" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cannot convert data, try again"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Неможливо обробити дані. Спробуйте пізніше"
+          }
+        }
+      }
+    },
     "download" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -82,23 +134,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Завантажити"
-          }
-        }
-      }
-    },
-    "free_images" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Free Images"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Бзкоштовні зображення"
           }
         }
       }
@@ -245,13 +280,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cannot send request.\\n"
+            "value" : "Cannot send request. Check your network connection"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Неможливо надіслати запит. Перевірте мережу"
+            "value" : "Неможливо надіслати запит. Перевірте мережеве зʼєднання"
           }
         }
       }
@@ -307,19 +342,18 @@
         }
       }
     },
-    "photo_format_%s" : {
-      "extractionState" : "manual",
+    "photo_format_%@" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Photo in %s format"
+            "value" : "Photo in %@ format"
           }
         },
         "uk" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Фото у форматі %s"
+            "state" : "translated",
+            "value" : "Фото у форматі %@"
           }
         }
       }

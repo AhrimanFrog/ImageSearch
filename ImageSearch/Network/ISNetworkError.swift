@@ -1,7 +1,7 @@
 import Foundation
 
 enum ISNetworkError: LocalizedError, Equatable {
-    case networkProblem(String)
+    case networkProblem
     case invalidData
     case badRequest
     case badResponse
@@ -9,11 +9,11 @@ enum ISNetworkError: LocalizedError, Equatable {
 
     var errorDescription: String {
         return switch self {
-        case .networkProblem(let description): "Cannot send request.\n\(description)"
-        case .badRequest: "Cannot fetch data. Bad request"
-        case .invalidData: "Cannot form request. Invalid data input"
-        case .badResponse: "Cannot convert data, try again"
-        case .wrongStatusCode(let code): "Wrong status code recieved - \(code). Cannot convert data"
+        case .networkProblem: String(localized: "network_problem")
+        case .badRequest: String(localized: "bad_request")
+        case .invalidData: String(localized: "invalid_data")
+        case .badResponse: String(localized: "bad_response")
+        case .wrongStatusCode(let code): String(localized: "wrong_code_\(code)")
         }
     }
 }

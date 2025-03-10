@@ -17,7 +17,7 @@ class SaveSuccessfulView: UIView {
 
     private func configure() {
         checkmarkView.tintColor = .systemGray2
-        textLabel.text = "Photo saved successfully!"
+        textLabel.text = String(localized: "save_successful")
         textLabel.numberOfLines = 2
         textLabel.lineBreakMode = .byTruncatingTail
         textLabel.font = .openSans(ofSize: 18, style: .medium)

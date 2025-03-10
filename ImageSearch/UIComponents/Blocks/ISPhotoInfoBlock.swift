@@ -2,10 +2,10 @@ import UIKit
 import SnapKit
 
 class ISPhotoInfoBlock: UIView {
-    let shareButton = ISButton(title: "Share", image: .share, style: .plain)
+    let shareButton = ISButton(title: String(localized: "share"), image: .share, style: .plain)
     private let licenceTitleLabel = UILabel()
     private let license = ISCommentLabel()
-    let downloadButton = ISButton(title: "Download", image: .download)
+    let downloadButton = ISButton(title: String(localized: "download"), image: .download)
     private let photoFormatLabel = UILabel()
 
     override init(frame: CGRect) {
@@ -20,15 +20,15 @@ class ISPhotoInfoBlock: UIView {
 
     func setImageFormat(toFormatOf image: ISImage) {
         let format = image.largeImageURL.split(separator: ".").last
-        photoFormatLabel.text = "Photo in .\(format?.uppercased() ?? "unknown") format"
+        photoFormatLabel.text = String(localized: "photo_format_\(format?.uppercased() ?? "unknown")")
     }
 
     private func configure() {
         backgroundColor = .systemBackground
-        licenceTitleLabel.text = "APP License"
+        licenceTitleLabel.text = String(localized: "app_license")
         licenceTitleLabel.textColor = .customPurple
         licenceTitleLabel.font = .openSans(ofSize: 14, style: .light)
-        license.text = "Free for commercial use\nNo attribution required"
+        license.text = String(localized: "license")
         license.numberOfLines = 2
         photoFormatLabel.font = .openSans(ofSize: 14, style: .light)
     }

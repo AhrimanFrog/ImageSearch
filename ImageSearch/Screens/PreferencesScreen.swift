@@ -124,16 +124,16 @@ class PreferencesScreen: UIView, Screen {
 
     private func configure() {
         backgroundColor = .systemBackground
-        imageTypePicker.label.text = "Image Type"
-        orientationPicker.label.text = "Orientation"
+        imageTypePicker.label.text = String(localized: "image_type")
+        orientationPicker.label.text = String(localized: "orientation")
         minWidthInput.text = String(originalPreferences.value.minWidth.value)
         minHeightInput.text = String(originalPreferences.value.minHeight.value)
         safeSerach.isOn = originalPreferences.value.safeSerach.value
-        orderPicker.label.text = "Order"
+        orderPicker.label.text = String(localized: "order")
         safeSerach.onTintColor = .customPurple
-        minWidthLabel.text = "Minimal Width"
-        minHeightLabel.text = "Minimal Height"
-        safeSearchLabel.text = "Safe Search"
+        minWidthLabel.text = String(localized: "minimal_width")
+        minHeightLabel.text = String(localized: "minimal_height")
+        safeSearchLabel.text = String(localized: "safe_search")
     }
 
     private func setConstraints() {

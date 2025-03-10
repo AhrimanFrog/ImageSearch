@@ -9,19 +9,19 @@ struct Preferences: Equatable {
     enum ImageType: String, CaseIterable, CustomStringConvertible {
         case all, photo, illustration, vector
 
-        var description: String { self.rawValue } // temporary; will be changed after localization is implemented
+        var description: String { String(localized: String.LocalizationValue(stringLiteral: rawValue)) }
     }
 
     enum Orientation: String, CaseIterable, CustomStringConvertible {
         case all, horizontal, vertical
 
-        var description: String { self.rawValue } // temporary; will be changed after localization is implemented
+        var description: String { String(localized: String.LocalizationValue(stringLiteral: rawValue)) }
     }
 
     enum Order: String, CaseIterable, CustomStringConvertible {
         case popular, latest
 
-        var description: String { self.rawValue } // temporary; will be changed after localization is implemented
+        var description: String { String(localized: String.LocalizationValue(stringLiteral: rawValue)) }
     }
 
     let imageType = CurrentValueSubject<ImageType, Never>(.all)

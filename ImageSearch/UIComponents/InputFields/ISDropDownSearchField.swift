@@ -19,7 +19,7 @@ class ISDropDownSearchField: UIView {
     }
 
     func setText(from type: Preferences.ImageType) {
-        currentTypeButton.setTitle(type.rawValue.capitalized, for: .normal)
+        currentTypeButton.setTitle(type.description, for: .normal)
     }
 
     private func configure() {

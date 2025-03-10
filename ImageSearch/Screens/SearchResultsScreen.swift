@@ -34,8 +34,8 @@ final class SearchResultsScreen: ISScreen<SearchResultsViewModel> {
     private func configure() {
         backgroundColor = .systemGray5
         topBanner.backgroundColor = .systemBackground
-        totalResultsLabel.text = "\(viewModel.total.value) Free Images"
-        relatedLabel.text = "Related"
+        totalResultsLabel.text = String(localized: "\(viewModel.total.value)_free_images")
+        relatedLabel.text = String(localized: "related")
         header.searchField.text = viewModel.query
     }
 
@@ -53,7 +53,9 @@ final class SearchResultsScreen: ISScreen<SearchResultsViewModel> {
 
     private func bindViewModel() {
         viewModel.total
-            .sink { [weak self] newTotal in self?.totalResultsLabel.text = "\(newTotal) Free Images" }
+            .sink { [weak self] newTotal in
+                self?.totalResultsLabel.text = String(localized: "\(newTotal)_free_images")
+            }
             .store(in: &disposalBag)
     }
 
