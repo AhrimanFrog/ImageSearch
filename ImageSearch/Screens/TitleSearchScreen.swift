@@ -28,8 +28,9 @@ final class TitleSearchScreen: ISScreen<TitleSearchViewModel> {
             for: .touchUpInside
         )
         preferencesSubscription = viewModel.preferences.value.imageType.sink { [weak self] newValue in
+            guard let host = self?.owner, host.isViewLoaded && self?.window != nil else { return }
             self?.searchField.currentTypeButton.setTitle(newValue.rawValue.capitalized, for: .normal)
-            self?.viewModel.manageChoiceTable(.dismiss)
+            self?.owner?.dismiss(animated: true)
         }
         searchField.currentTypeButton.addAction(
             UIAction { [weak self] _ in
@@ -44,7 +45,7 @@ final class TitleSearchScreen: ISScreen<TitleSearchViewModel> {
                     popoverController.sourceView = searchField.currentTypeButton
                     popoverController.permittedArrowDirections = [.up, .down]
                 }
-                viewModel.manageChoiceTable(.present(tableController))
+                owner?.present(tableController, animated: true)
             },
             for: .touchUpInside
         )
@@ -79,7 +80,6 @@ final class TitleSearchScreen: ISScreen<TitleSearchViewModel> {
 }
 
 final class TitleSearchViewModel: ViewModel {
-    let manageChoiceTable: (MainCoordinator.ModalState) -> Void
     let preferences: CurrentValueSubject<Preferences, Never>
     private let networkManager: NetworkManager
     private let requestTransitionToResults: (Result<(APIImagesResponse, String), ISNetworkError>) -> Void
@@ -88,12 +88,10 @@ final class TitleSearchViewModel: ViewModel {
     init(
         networkManager: NetworkManager,
         preferences: CurrentValueSubject<Preferences, Never>,
-        manageChoiceTable: @escaping (MainCoordinator.ModalState) -> Void,
         coordinatorNotifier: @escaping (Result<(APIImagesResponse, String), ISNetworkError>) -> Void
     ) {
         self.networkManager = networkManager
         self.preferences = preferences
-        self.manageChoiceTable = manageChoiceTable
         requestTransitionToResults = coordinatorNotifier
     }
 

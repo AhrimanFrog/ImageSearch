@@ -25,11 +25,11 @@ struct Preferences: Equatable {
     }
 
     let imageType = CurrentValueSubject<ImageType, Never>(.all)
-    var orientation = CurrentValueSubject<Orientation, Never>(.all)
+    let orientation = CurrentValueSubject<Orientation, Never>(.all)
     var minWidth: Int = 0
     var minHeight: Int = 0
     var safeSerach: Bool = false
-    var order = CurrentValueSubject<Order, Never>(.popular)
+    let order = CurrentValueSubject<Order, Never>(.popular)
 
     var asDict: [String: String] {
         return [

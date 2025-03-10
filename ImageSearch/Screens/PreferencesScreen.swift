@@ -86,6 +86,17 @@ class PreferencesScreen: UIView, Screen {
                 self?.owner?.dismiss(animated: true)
             }
             .store(in: &changesSubscriptions)
+        safeSerach.publisher(for: \.isOn)
+            .sink { [weak self] in self?.draftPreferences.value.safeSerach = $0 }
+            .store(in: &changesSubscriptions)
+        minWidthInput.publisher(for: \.text)
+            .map { Int($0 ?? "0") ?? 0 }
+            .sink { [weak self] in self?.draftPreferences.value.minWidth = $0 }
+            .store(in: &changesSubscriptions)
+        minHeightInput.publisher(for: \.text)
+            .map { Int($0 ?? "0") ?? 0 }
+            .sink { [weak self] in self?.draftPreferences.value.minHeight = $0 }
+            .store(in: &changesSubscriptions)
         draftPreferences
             .sink { [weak self] newValue in
                 guard let self else { return }
@@ -105,7 +116,7 @@ class PreferencesScreen: UIView, Screen {
                 UIView.layoutFittingCompressedSize
             )
             popoverController.delegate = PopoverPresentationDelegate.shared
-            popoverController.sourceView = component
+            popoverController.sourceView = component.stateLabel
             popoverController.permittedArrowDirections = [.up, .down]
         }
         owner?.present(tableController, animated: true)
@@ -115,8 +126,9 @@ class PreferencesScreen: UIView, Screen {
         backgroundColor = .systemBackground
         imageTypePicker.label.text = "Image Type"
         orientationPicker.label.text = "Orientation"
-        minWidthInput.placeholder = "0"
-        minHeightInput.placeholder = "0"
+        minWidthInput.text = String(originalPreferences.value.minWidth)
+        minHeightInput.text = String(originalPreferences.value.minWidth)
+        safeSerach.isOn = originalPreferences.value.safeSerach
         orderPicker.label.text = "Order"
         safeSerach.onTintColor = .customPurple
         minWidthLabel.text = "Minimal Width"
