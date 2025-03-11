@@ -100,7 +100,7 @@ class PhotoScreen: ISScreen<PhotoScreenViewModel> {
         header.snp.makeConstraints { make in
             make.top.equalTo(safeAreaLayoutGuide)
             make.horizontalEdges.equalToSuperview()
-            make.height.lessThanOrEqualTo(60)
+            make.height.equalTo(60)
         }
 
         topBanner.snp.makeConstraints { make in
@@ -121,7 +121,7 @@ class PhotoScreen: ISScreen<PhotoScreenViewModel> {
 
         photoInfoBlock.snp.makeConstraints { make in
             make.horizontalEdges.equalToSuperview()
-            make.height.equalTo(187)
+            make.height.lessThanOrEqualTo(187)
             make.top.equalTo(photoImage.snp.bottom)
         }
 

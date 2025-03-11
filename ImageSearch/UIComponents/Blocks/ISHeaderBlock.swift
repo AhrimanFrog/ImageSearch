@@ -28,7 +28,7 @@ class ISHeaderBlock: UIView {
         addSubviews(homeButton, searchField, preferencesButton, bottonLine)
 
         homeButton.snp.makeConstraints { make in
-            make.width.height.lessThanOrEqualTo(52)
+            make.width.height.equalTo(52)
             make.leading.bottom.equalToSuperview().inset(6)
         }
 

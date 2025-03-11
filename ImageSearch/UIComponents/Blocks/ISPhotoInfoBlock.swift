@@ -29,7 +29,7 @@ class ISPhotoInfoBlock: UIView {
         licenceTitleLabel.textColor = .customPurple
         licenceTitleLabel.font = .openSans(ofSize: 14, style: .light)
         license.text = String(localized: "license")
-        license.numberOfLines = 2
+        license.numberOfLines = 3
         photoFormatLabel.font = .openSans(ofSize: 14, style: .light)
     }
 
@@ -50,7 +50,7 @@ class ISPhotoInfoBlock: UIView {
 
         shareButton.snp.makeConstraints { make in
             make.trailing.width.equalTo(photoFormatLabel)
-            make.height.lessThanOrEqualTo(32)
+            make.height.equalTo(32)
             make.top.equalTo(photoFormatLabel.snp.bottom).inset(-16)
         }
 
@@ -59,12 +59,12 @@ class ISPhotoInfoBlock: UIView {
             make.horizontalEdges.equalToSuperview().inset(16)
             make.top.equalTo(shareButton.snp.bottom).inset(-26)
         }
-    
+
         license.snp.makeConstraints { make in
             make.leading.equalTo(licenceTitleLabel)
-            make.bottom.equalTo(downloadButton.snp.top).inset(-12)
+            make.bottom.equalTo(downloadButton.snp.top).inset(-5)
             make.top.equalTo(licenceTitleLabel.snp.bottom).inset(-5)
-            make.trailing.equalTo(shareButton.snp.leading).inset(-22)
+            make.trailing.equalTo(shareButton.snp.leading).inset(-12)
         }
     }
 }

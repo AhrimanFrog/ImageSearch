@@ -81,7 +81,7 @@ final class SearchResultsScreen: ISScreen<SearchResultsViewModel> {
             make.top.equalTo(totalResultsLabel.snp.bottom).inset(-10)
             make.leading.equalToSuperview().inset(16)
             make.height.equalTo(32)
-            make.width.equalTo(56)
+            make.width.equalTo(66)
         }
 
         relatedCollection.snp.makeConstraints { make in
