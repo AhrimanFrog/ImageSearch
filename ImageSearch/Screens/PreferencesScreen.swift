@@ -50,85 +50,69 @@ class PreferencesScreen: UIView, Screen {
         imageTypePicker.addAction(
             UIAction { [weak self] _ in
                 guard let self else { return }
-                spawnTable(forValue: draftPreferences.value.imageType, ofComponent: imageTypePicker)
+                spawnTable(
+                    forValue: draftPreferences.value.imageType, ofComponent: imageTypePicker
+                ) { [draftPreferences] in draftPreferences.value.imageType = $0 }
             },
             for: .touchUpInside
         )
-        draftPreferences.value.imageType
-            .sink { [weak self] in
-                self?.imageTypePicker.stateLabel.text = $0.description
-                self?.owner?.dismiss(animated: true)
-            }
+        draftPreferences
+            .map(\.imageType)
+            .removeDuplicates()
+            .sink { [weak self] in self?.imageTypePicker.stateLabel.text = $0.description }
             .store(in: &changesSubscriptions)
         orientationPicker.addAction(
             UIAction { [weak self] _ in
                 guard let self else { return }
-                spawnTable(forValue: draftPreferences.value.orientation, ofComponent: orientationPicker)
+                spawnTable(
+                    forValue: draftPreferences.value.orientation, ofComponent: orientationPicker
+                ) { [draftPreferences] in draftPreferences.value.orientation = $0 }
             },
             for: .touchUpInside
         )
-        draftPreferences.value.orientation
-            .sink { [weak self] in
-                self?.orientationPicker.stateLabel.text = $0.description
-                self?.owner?.dismiss(animated: true)
-            }
+        draftPreferences
+            .map(\.orientation)
+            .removeDuplicates()
+            .sink { [weak self] in self?.orientationPicker.stateLabel.text = $0.description }
             .store(in: &changesSubscriptions)
         orderPicker.addAction(
             UIAction { [weak self] _ in
                 guard let self else { return }
-                spawnTable(forValue: draftPreferences.value.order, ofComponent: orderPicker)
+                spawnTable(
+                    forValue: draftPreferences.value.order, ofComponent: orderPicker
+                ) { [draftPreferences] in draftPreferences.value.order = $0 }
             },
             for: .touchUpInside
         )
-        draftPreferences.value.order
-            .sink { [weak self] in
-                self?.orderPicker.stateLabel.text = $0.description
-                self?.owner?.dismiss(animated: true)
-            }
+        draftPreferences
+            .map(\.order)
+            .removeDuplicates()
+            .sink { [weak self] in self?.orderPicker.stateLabel.text = $0.description }
             .store(in: &changesSubscriptions)
         safeSerach.publisher(for: \.isOn)
-            .sink { [weak self] in self?.draftPreferences.value.safeSerach.send($0) }
+            .sink { [weak self] in self?.draftPreferences.value.safeSerach = $0 }
             .store(in: &changesSubscriptions)
         minWidthInput.publisher(for: \.text)
             .map { Int($0 ?? "0") ?? 0 }
-            .sink { [weak self] in self?.draftPreferences.value.minWidth.send($0) }
+            .sink { [weak self] in self?.draftPreferences.value.minWidth = $0 }
             .store(in: &changesSubscriptions)
         minHeightInput.publisher(for: \.text)
             .map { Int($0 ?? "0") ?? 0 }
-            .sink { [weak self] in self?.draftPreferences.value.minHeight.send($0) }
+            .sink { [weak self] in self?.draftPreferences.value.minHeight = $0 }
             .store(in: &changesSubscriptions)
-        draftPreferences.value.changed
-            .sink { [weak self] in
-                guard let self else { return }
-                headerBlock.doneButton.isEnabled = draftPreferences.value != originalPreferences.value
-            }
+        Publishers.CombineLatest(draftPreferences, originalPreferences)
+            .map { $0 != $1 }
+            .assign(to: \.isEnabled, on: headerBlock.doneButton)
             .store(in: &changesSubscriptions)
-    }
-
-    private func spawnTable<Val: Enumerable>(
-        forValue publisher: CurrentValueSubject<Val, Never>,
-        ofComponent component: ISPickerLabel
-    ) {
-        let tableController = PopoverSelectionTable(publisher: publisher)
-        tableController.modalPresentationStyle = .popover
-        if let popoverController = tableController.popoverPresentationController {
-            tableController.preferredContentSize = tableController.view.systemLayoutSizeFitting(
-                UIView.layoutFittingCompressedSize
-            )
-            popoverController.delegate = PopoverPresentationDelegate.shared
-            popoverController.sourceView = component.stateLabel
-            popoverController.permittedArrowDirections = [.up, .down]
-        }
-        owner?.present(tableController, animated: true)
     }
 
     private func configure() {
         backgroundColor = .systemBackground
         imageTypePicker.label.text = String(localized: "image_type")
         orientationPicker.label.text = String(localized: "orientation")
-        minWidthInput.text = String(originalPreferences.value.minWidth.value)
-        minHeightInput.text = String(originalPreferences.value.minHeight.value)
-        safeSerach.isOn = originalPreferences.value.safeSerach.value
+        minWidthInput.text = String(originalPreferences.value.minWidth)
+        minHeightInput.text = String(originalPreferences.value.minHeight)
+        safeSerach.isOn = originalPreferences.value.safeSerach
         orderPicker.label.text = String(localized: "order")
         safeSerach.onTintColor = .customPurple
         minWidthLabel.text = String(localized: "minimal_width")

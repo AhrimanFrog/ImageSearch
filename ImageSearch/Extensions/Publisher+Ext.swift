@@ -13,9 +13,3 @@ extension Publisher where Failure == ISNetworkError {
         )
     }
 }
-
-extension Publisher where Failure == Never {
-    func void() -> AnyPublisher<Void, Never> {
-        return self.map { _ in return }.eraseToAnyPublisher()
-    }
-}

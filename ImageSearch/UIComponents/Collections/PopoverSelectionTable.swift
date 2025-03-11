@@ -4,12 +4,12 @@ import Combine
 typealias Enumerable = CaseIterable & Equatable & CustomStringConvertible
 
 class PopoverSelectionTable<Value: Enumerable>: UITableViewController {
-    private let publisher: CurrentValueSubject<Value, Never>
     private let allowedChoises: [Value]
+    private let onSelect: (Value) -> Void
 
-    init(publisher: CurrentValueSubject<Value, Never>) {
-        self.publisher = publisher
-        allowedChoises = Value.allCases.filter { $0 != publisher.value }
+    init(current: Value, onSelect: @escaping (Value) -> Void) {
+        allowedChoises = Value.allCases.filter { $0 != current }
+        self.onSelect = onSelect
         super.init(style: .plain)
         tableView.register(ISTypeCell.self, forCellReuseIdentifier: ISTypeCell.reuseID)
     }
@@ -36,6 +36,6 @@ class PopoverSelectionTable<Value: Enumerable>: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        publisher.send(allowedChoises[indexPath.row])
+        dismiss(animated: true) { self.onSelect(self.allowedChoises[indexPath.row]) }
     }
 }

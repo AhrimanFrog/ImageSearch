@@ -126,9 +126,8 @@ class PhotoScreen: ISScreen<PhotoScreenViewModel> {
         }
 
         relatedLabel.snp.makeConstraints { make in
-            make.leading.equalToSuperview().inset(16)
+            make.leading.trailing.equalToSuperview().inset(16)
             make.top.equalTo(photoInfoBlock.snp.bottom).inset(-16)
-            make.width.equalTo(74)
             make.height.equalTo(22)
         }
 

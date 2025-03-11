@@ -229,13 +229,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Free for commercial use\\nNo attribution required"
+            "value" : "Free for commercial use No attribution required"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Безкоштовно для комерційного використання.\\nВказівка ​​авторства не потрібна"
+            "value" : "Безкоштовно для комерційного використання.\nВказівка ​​авторства не потрібна"
           }
         }
       }

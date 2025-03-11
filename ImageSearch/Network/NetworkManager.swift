@@ -60,10 +60,15 @@ class NetworkManager {
         let baseQueryItems = [
             URLQueryItem(name: "key", value: apiKey),
             URLQueryItem(name: "q", value: query.formattedForQuery),
-            URLQueryItem(name: "page", value: String(page))
+            URLQueryItem(name: "page", value: String(page)),
+            URLQueryItem(name: "lang", value: NetworkManager.getLanguageCode())
         ]
         let formattedPreferences = preferences.asDict.map { URLQueryItem(name: $0.key, value: $0.value) }
         urlComponents?.queryItems = baseQueryItems + formattedPreferences
         return urlComponents?.url
+    }
+
+    private static func getLanguageCode() -> String {
+        return Locale.current.language.languageCode?.identifier ?? "en"
     }
 }

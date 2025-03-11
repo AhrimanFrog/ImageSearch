@@ -2,10 +2,6 @@ import Combine
 import Foundation
 
 struct Preferences: Equatable {
-    static func == (lhs: Preferences, rhs: Preferences) -> Bool {
-        return lhs.asDict == rhs.asDict
-    }
-
     enum ImageType: String, CaseIterable, CustomStringConvertible {
         case all, photo, illustration, vector
 
@@ -24,28 +20,21 @@ struct Preferences: Equatable {
         var description: String { String(localized: String.LocalizationValue(stringLiteral: rawValue)) }
     }
 
-    let imageType = CurrentValueSubject<ImageType, Never>(.all)
-    let orientation = CurrentValueSubject<Orientation, Never>(.all)
-    var minWidth: CurrentValueSubject<Int, Never> = .init(0)
-    var minHeight: CurrentValueSubject<Int, Never> = .init(0)
-    var safeSerach: CurrentValueSubject<Bool, Never> = .init(false)
-    let order = CurrentValueSubject<Order, Never>(.popular)
+    var imageType: ImageType = .all
+    var orientation: Orientation = .all
+    var minWidth: Int = 0
+    var minHeight: Int = 0
+    var safeSerach: Bool = false
+    var order: Order = .popular
 
     var asDict: [String: String] {
         return [
-            "image_type": imageType.value.rawValue,
-            "orientation": orientation.value.rawValue,
-            "min_width": String(minWidth.value),
-            "min_height": String(minHeight.value),
-            "order": order.value.rawValue,
-            "safesearch": String(safeSerach.value)
+            "image_type": imageType.rawValue,
+            "orientation": orientation.rawValue,
+            "min_width": String(minWidth),
+            "min_height": String(minHeight),
+            "order": order.rawValue,
+            "safesearch": String(safeSerach)
         ]
-    }
-
-    var changed: AnyPublisher<Void, Never> {
-        return imageType
-            .void()
-            .merge(with: orientation.void(), minWidth.void(), minHeight.void(), safeSerach.void(), order.void())
-            .eraseToAnyPublisher()
     }
 }

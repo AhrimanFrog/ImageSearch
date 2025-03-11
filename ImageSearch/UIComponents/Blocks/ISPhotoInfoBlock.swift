@@ -54,17 +54,17 @@ class ISPhotoInfoBlock: UIView {
             make.top.equalTo(photoFormatLabel.snp.bottom).inset(-16)
         }
 
-        license.snp.makeConstraints { make in
-            make.leading.equalTo(licenceTitleLabel)
-            make.bottom.equalTo(shareButton)
-            make.top.equalTo(licenceTitleLabel.snp.bottom).inset(-5)
-            make.width.lessThanOrEqualTo(166)
-        }
-
         downloadButton.snp.makeConstraints { make in
             make.bottom.equalToSuperview().inset(26)
             make.horizontalEdges.equalToSuperview().inset(16)
-            make.top.equalTo(license.snp.bottom).inset(-26)
+            make.top.equalTo(shareButton.snp.bottom).inset(-26)
+        }
+    
+        license.snp.makeConstraints { make in
+            make.leading.equalTo(licenceTitleLabel)
+            make.bottom.equalTo(downloadButton.snp.top).inset(-12)
+            make.top.equalTo(licenceTitleLabel.snp.bottom).inset(-5)
+            make.trailing.equalTo(shareButton.snp.leading).inset(-22)
         }
     }
 }

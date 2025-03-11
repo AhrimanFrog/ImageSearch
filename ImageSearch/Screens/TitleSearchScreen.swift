@@ -27,25 +27,20 @@ final class TitleSearchScreen: ISScreen<TitleSearchViewModel> {
             },
             for: .touchUpInside
         )
-        preferencesSubscription = viewModel.preferences.value.imageType.sink { [weak self] newValue in
-            guard let host = self?.owner, host.isViewLoaded && self?.window != nil else { return }
-            self?.searchField.currentTypeButton.setTitle(newValue.description, for: .normal)
-            self?.owner?.dismiss(animated: true)
-        }
+        preferencesSubscription = viewModel.preferences
+            .map(\.imageType)
+            .removeDuplicates()
+            .sink { [weak self] newValue in
+                guard let host = self?.owner, host.isViewLoaded && self?.window != nil else { return }
+                self?.searchField.currentTypeButton.setTitle(newValue.description, for: .normal)
+            }
         searchField.currentTypeButton.addAction(
             UIAction { [weak self] _ in
                 guard let self else { return }
-                let tableController = PopoverSelectionTable(publisher: viewModel.preferences.value.imageType)
-                tableController.modalPresentationStyle = .popover
-                if let popoverController = tableController.popoverPresentationController {
-                    tableController.preferredContentSize = tableController.view.systemLayoutSizeFitting(
-                        UIView.layoutFittingCompressedSize
-                    )
-                    popoverController.delegate = PopoverPresentationDelegate.shared
-                    popoverController.sourceView = searchField.currentTypeButton
-                    popoverController.permittedArrowDirections = [.up, .down]
-                }
-                owner?.present(tableController, animated: true)
+                spawnTable(
+                    forValue: viewModel.preferences.value.imageType,
+                    ofComponent: searchField.currentTypeButton
+                ) { [preferences = viewModel.preferences] in preferences.value.imageType = $0 }
             },
             for: .touchUpInside
         )
