@@ -9,6 +9,10 @@
 /* Begin PBXBuildFile section */
 		D51BDB6D2D478D9C00F6DEDD /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = D51BDB6B2D478D9C00F6DEDD /* .gitignore */; };
 		D51BDB6E2D478D9C00F6DEDD /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = D51BDB6C2D478D9C00F6DEDD /* .swiftlint.yml */; };
+		D51BDB862D49372600F6DEDD /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = D51BDB852D49372600F6DEDD /* Config.xcconfig */; };
+		D51BDDE32D4BCF7F00F6DEDD /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = D51BDDE22D4BCF7F00F6DEDD /* SnapKit */; };
+		D5233C052D6F970000F8132F /* Hero in Frameworks */ = {isa = PBXBuildFile; productRef = D5233C042D6F970000F8132F /* Hero */; };
+		D5233CFA2D7B3E4000F8132F /* IQKeyboardManagerSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D5233CF92D7B3E4000F8132F /* IQKeyboardManagerSwift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -28,12 +32,26 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		D51BDDE72D4BCF7F00F6DEDD /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		D51BDB372D46E20E00F6DEDD /* ImageSearch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ImageSearch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D51BDB4D2D46E21000F6DEDD /* ImageSearchTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ImageSearchTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D51BDB572D46E21000F6DEDD /* ImageSearchUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ImageSearchUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D51BDB6B2D478D9C00F6DEDD /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		D51BDB6C2D478D9C00F6DEDD /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
+		D51BDB852D49372600F6DEDD /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -72,6 +90,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D5233C052D6F970000F8132F /* Hero in Frameworks */,
+				D51BDDE32D4BCF7F00F6DEDD /* SnapKit in Frameworks */,
+				D5233CFA2D7B3E4000F8132F /* IQKeyboardManagerSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -95,11 +116,13 @@
 		D51BDB2E2D46E20E00F6DEDD = {
 			isa = PBXGroup;
 			children = (
+				D51BDB852D49372600F6DEDD /* Config.xcconfig */,
 				D51BDB6B2D478D9C00F6DEDD /* .gitignore */,
 				D51BDB6C2D478D9C00F6DEDD /* .swiftlint.yml */,
 				D51BDB392D46E20E00F6DEDD /* ImageSearch */,
 				D51BDB502D46E21000F6DEDD /* ImageSearchTests */,
 				D51BDB5A2D46E21000F6DEDD /* ImageSearchUITests */,
+				D51BDDE12D4BCF7F00F6DEDD /* Frameworks */,
 				D51BDB382D46E20E00F6DEDD /* Products */,
 			);
 			sourceTree = "<group>";
@@ -114,6 +137,13 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		D51BDDE12D4BCF7F00F6DEDD /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -125,6 +155,7 @@
 				D51BDB342D46E20E00F6DEDD /* Frameworks */,
 				D51BDB352D46E20E00F6DEDD /* Resources */,
 				D51BDB6F2D478DB000F6DEDD /* Linter */,
+				D51BDDE72D4BCF7F00F6DEDD /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -135,6 +166,9 @@
 			);
 			name = ImageSearch;
 			packageProductDependencies = (
+				D51BDDE22D4BCF7F00F6DEDD /* SnapKit */,
+				D5233C042D6F970000F8132F /* Hero */,
+				D5233CF92D7B3E4000F8132F /* IQKeyboardManagerSwift */,
 			);
 			productName = ImageSearch;
 			productReference = D51BDB372D46E20E00F6DEDD /* ImageSearch.app */;
@@ -215,9 +249,15 @@
 			knownRegions = (
 				en,
 				Base,
+				uk,
 			);
 			mainGroup = D51BDB2E2D46E20E00F6DEDD;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				D51BDDE02D4BCF5700F6DEDD /* XCRemoteSwiftPackageReference "SnapKit" */,
+				D5233C032D6F96EF00F8132F /* XCRemoteSwiftPackageReference "Hero" */,
+				D5233CF82D7B3E1900F8132F /* XCRemoteSwiftPackageReference "IQKeyboardManager" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = D51BDB382D46E20E00F6DEDD /* Products */;
 			projectDirPath = "";
@@ -235,6 +275,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D51BDB862D49372600F6DEDD /* Config.xcconfig in Resources */,
 				D51BDB6D2D478D9C00F6DEDD /* .gitignore in Resources */,
 				D51BDB6E2D478D9C00F6DEDD /* .swiftlint.yml in Resources */,
 			);
@@ -337,6 +378,10 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.none.ImageSearch;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -364,6 +409,10 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.none.ImageSearch;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -372,6 +421,7 @@
 		};
 		D51BDB632D46E21000F6DEDD /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D51BDB852D49372600F6DEDD /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -429,12 +479,14 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
 		D51BDB642D46E21000F6DEDD /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D51BDB852D49372600F6DEDD /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -485,6 +537,7 @@
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -597,6 +650,51 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		D51BDDE02D4BCF5700F6DEDD /* XCRemoteSwiftPackageReference "SnapKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SnapKit/SnapKit";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.7.1;
+			};
+		};
+		D5233C032D6F96EF00F8132F /* XCRemoteSwiftPackageReference "Hero" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/HeroTransitions/Hero";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.6.4;
+			};
+		};
+		D5233CF82D7B3E1900F8132F /* XCRemoteSwiftPackageReference "IQKeyboardManager" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/hackiftekhar/IQKeyboardManager";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		D51BDDE22D4BCF7F00F6DEDD /* SnapKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D51BDDE02D4BCF5700F6DEDD /* XCRemoteSwiftPackageReference "SnapKit" */;
+			productName = SnapKit;
+		};
+		D5233C042D6F970000F8132F /* Hero */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D5233C032D6F96EF00F8132F /* XCRemoteSwiftPackageReference "Hero" */;
+			productName = Hero;
+		};
+		D5233CF92D7B3E4000F8132F /* IQKeyboardManagerSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D5233CF82D7B3E1900F8132F /* XCRemoteSwiftPackageReference "IQKeyboardManager" */;
+			productName = IQKeyboardManagerSwift;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = D51BDB2F2D46E20E00F6DEDD /* Project object */;
 }
