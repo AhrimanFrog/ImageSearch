@@ -10,6 +10,7 @@ extension UIImage {
         case close = "xmark.circle"
         case down = "chevron.down"
         case picker = "chevron.up.chevron.down"
+        case change = "crop.rotate"
     }
 
     convenience init?(sfImage: SFImage) {

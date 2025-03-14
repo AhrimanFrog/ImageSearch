@@ -13,21 +13,22 @@ class NetworkSearchCoordinator: Coordinator {
         case present(UIViewController), dismiss
     }
 
-    private let window: UIWindow
-    private let screenFactory: ScreenFactory
-    private let navigationController: UINavigationController
+    private let screenFactory: NetwrokScreenFactory
+    let navigationController: UINavigationController
 
-    init(window: UIWindow) {
-        screenFactory = ScreenFactory()
+    init() {
+        screenFactory = NetwrokScreenFactory()
         navigationController = .init(rootViewController: screenFactory.build(screen: .start))
-        self.window = window
-        self.window.rootViewController = navigationController
+        navigationController.tabBarItem = .init(
+            title: String(localized: "serach"),
+            image: .init(sfImage: .search),
+            tag: 0
+        )
         screenFactory.navigationHandler = self
     }
 
     func start() {
         navigationController.setNavigationBarHidden(true, animated: false)
-        window.makeKeyAndVisible()
     }
 
     func recieveStateChange<Error: LocalizedError>(_ change: Result<Destination, Error>) {

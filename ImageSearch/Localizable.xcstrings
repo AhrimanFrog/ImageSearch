@@ -121,6 +121,23 @@
         }
       }
     },
+    "change" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Change"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Зміна"
+          }
+        }
+      }
+    },
     "download" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -459,6 +476,9 @@
           }
         }
       }
+    },
+    "serach" : {
+
     },
     "settings" : {
       "extractionState" : "manual",
