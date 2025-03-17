@@ -1,6 +1,6 @@
 import UIKit
 
-class LocalSearchCoordinator: Coordinator {
+class LocalSearchCoordinator: Coordinator {    
     enum Destination {
         case localPhotos, transformation
     }

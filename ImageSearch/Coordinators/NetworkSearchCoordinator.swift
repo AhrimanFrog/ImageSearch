@@ -20,7 +20,7 @@ class NetworkSearchCoordinator: Coordinator {
         screenFactory = NetwrokScreenFactory()
         navigationController = .init(rootViewController: screenFactory.build(screen: .start))
         navigationController.tabBarItem = .init(
-            title: String(localized: "serach"),
+            title: String(localized: "search"),
             image: .init(sfImage: .search),
             tag: 0
         )

@@ -1,9 +1,7 @@
 import UIKit
 
 class MainCoordinator: Coordinator {
-    enum Destination {
-        case local, global
-    }
+    var children: [Coordinator] = []
 
     private let window: UIWindow
     private let tabBarController: UITabBarController
@@ -11,6 +9,8 @@ class MainCoordinator: Coordinator {
     init(window: UIWindow) {
         self.window = window
         tabBarController = .init()
+        tabBarController.tabBar.tintColor = .customPurple
+        tabBarController.tabBar.backgroundColor = .systemBackground
         window.rootViewController = tabBarController
     }
 
@@ -19,16 +19,11 @@ class MainCoordinator: Coordinator {
         let localCoordinator = LocalSearchCoordinator()
         networkCoordinator.start()
         localCoordinator.start()
+        children = [networkCoordinator, localCoordinator]
         tabBarController.setViewControllers(
             [networkCoordinator.navigationController, localCoordinator.navigationController],
             animated: true
         )
         window.makeKeyAndVisible()
-    }
-
-    func navigate(to: Destination) {
-    }
-
-    func handleError(with: String) {
     }
 }
