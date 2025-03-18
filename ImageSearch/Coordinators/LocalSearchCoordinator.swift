@@ -1,6 +1,6 @@
 import UIKit
 
-class LocalSearchCoordinator: Coordinator {    
+class LocalSearchCoordinator: Coordinator {
     enum Destination {
         case localPhotos, transformation
     }
@@ -13,6 +13,7 @@ class LocalSearchCoordinator: Coordinator {
             image: .init(sfImage: .change),
             tag: 1
         )
+        navigationController.isNavigationBarHidden = true
     }
 
     func start() {

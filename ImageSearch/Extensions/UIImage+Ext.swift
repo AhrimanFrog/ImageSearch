@@ -11,6 +11,7 @@ extension UIImage {
         case down = "chevron.down"
         case picker = "chevron.up.chevron.down"
         case change = "crop.rotate"
+        case photoAccessDenied = "eye.slash"
     }
 
     convenience init?(sfImage: SFImage) {
