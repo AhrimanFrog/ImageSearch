@@ -5,9 +5,12 @@ class LocalSearchCoordinator: Coordinator {
         case localPhotos, transformation
     }
 
-    let navigationController = UINavigationController()
+    let navigationController: UINavigationController
+
+    private let screenFactory = LocalScreenFactory()
 
     init() {
+        navigationController = .init(rootViewController: screenFactory.build())
         navigationController.tabBarItem = .init(
             title: String(localized: "change"),
             image: .init(sfImage: .change),
