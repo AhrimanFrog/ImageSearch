@@ -19,8 +19,7 @@ class LocalSearchCoordinator: Coordinator {
         navigationController.isNavigationBarHidden = true
     }
 
-    func start() {
-    }
+    func start() {}
 
     func navigate(to: Destination) { // swiftlint:disable:this identifier_name
     }

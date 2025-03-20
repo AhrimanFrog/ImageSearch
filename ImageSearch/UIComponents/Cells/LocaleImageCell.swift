@@ -7,6 +7,8 @@ class LocaleImageCell: UICollectionViewCell, ReuseIdentifiable {
 
     var code: PHImageRequestID?
 
+    var image: UIImage? { imageView.image }
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         configure()

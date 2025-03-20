@@ -33,6 +33,13 @@ extension LocalImagesCollection: UICollectionViewDelegateFlowLayout {
         let width = (collectionWidth - horizontalPadding - interitemSpacing * (itemsPerRow - 1)) / itemsPerRow
         return .init(width: width, height: width * 0.6)
     }
+
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let asset = assets.object(at: indexPath.item)
+        dataProvider.requestImage(for: asset, ofSize: PHImageManagerMaximumSize) { [weak self] in
+            self?.dataProvider.openCropScreen?($0)
+        }
+    }
 }
 
 extension LocalImagesCollection: UICollectionViewDataSource {

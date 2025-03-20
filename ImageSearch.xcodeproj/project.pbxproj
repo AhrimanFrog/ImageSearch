@@ -14,6 +14,7 @@
 		D5233C052D6F970000F8132F /* Hero in Frameworks */ = {isa = PBXBuildFile; productRef = D5233C042D6F970000F8132F /* Hero */; };
 		D5233CFA2D7B3E4000F8132F /* IQKeyboardManagerSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D5233CF92D7B3E4000F8132F /* IQKeyboardManagerSwift */; };
 		D524FBAA2D88753900010D53 /* TOCropViewController in Frameworks */ = {isa = PBXBuildFile; productRef = D524FBA92D88753900010D53 /* TOCropViewController */; };
+		D524FBB22D8C51E800010D53 /* CropViewController in Frameworks */ = {isa = PBXBuildFile; productRef = D524FBB12D8C51E800010D53 /* CropViewController */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -94,6 +95,7 @@
 				D5233C052D6F970000F8132F /* Hero in Frameworks */,
 				D51BDDE32D4BCF7F00F6DEDD /* SnapKit in Frameworks */,
 				D524FBAA2D88753900010D53 /* TOCropViewController in Frameworks */,
+				D524FBB22D8C51E800010D53 /* CropViewController in Frameworks */,
 				D5233CFA2D7B3E4000F8132F /* IQKeyboardManagerSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -172,6 +174,7 @@
 				D5233C042D6F970000F8132F /* Hero */,
 				D5233CF92D7B3E4000F8132F /* IQKeyboardManagerSwift */,
 				D524FBA92D88753900010D53 /* TOCropViewController */,
+				D524FBB12D8C51E800010D53 /* CropViewController */,
 			);
 			productName = ImageSearch;
 			productReference = D51BDB372D46E20E00F6DEDD /* ImageSearch.app */;
@@ -710,6 +713,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = D524FBA82D88752800010D53 /* XCRemoteSwiftPackageReference "TOCropViewController" */;
 			productName = TOCropViewController;
+		};
+		D524FBB12D8C51E800010D53 /* CropViewController */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D524FBA82D88752800010D53 /* XCRemoteSwiftPackageReference "TOCropViewController" */;
+			productName = CropViewController;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

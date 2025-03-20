@@ -2,7 +2,7 @@ import Combine
 import Foundation
 import UIKit
 
-protocol DataProvider: AnyObject {
+protocol NetworkDataProvider: AnyObject {
     func fetchMoreResults()
     func openPhotoScreen(forPhoto: ISImage)
     func imagePublisher(for: ISImage) -> AnyPublisher<UIImage, Never>
@@ -11,6 +11,6 @@ protocol DataProvider: AnyObject {
 }
 
 
-extension DataProvider {
+extension NetworkDataProvider {
     func fetchMoreResults() {}
 }
