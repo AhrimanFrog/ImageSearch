@@ -1,8 +1,8 @@
 import UIKit
 
 extension UICollectionViewLayout {
-    static func mediaLayout() -> UICollectionViewFlowLayout {
-        let padding: CGFloat = 16
+    static func mediaLayout(padding: CGFloat = 16) -> UICollectionViewFlowLayout {
+        let padding: CGFloat = padding
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
         layout.sectionInset = UIEdgeInsets(all: padding)

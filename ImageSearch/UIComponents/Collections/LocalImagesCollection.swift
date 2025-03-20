@@ -8,7 +8,7 @@ class LocalImagesCollection: UICollectionView {
     init(dataProvider: LocalPhotosViewModel) {
         self.dataProvider = dataProvider
         assets = dataProvider.fetchAssets()
-        super.init(frame: .zero, collectionViewLayout: .mediaLayout())
+        super.init(frame: .zero, collectionViewLayout: .mediaLayout(padding: 12))
         register(LocaleImageCell.self)
         dataSource = self
         delegate = self
@@ -19,7 +19,20 @@ class LocalImagesCollection: UICollectionView {
     }
 }
 
-extension LocalImagesCollection: UICollectionViewDelegate {
+extension LocalImagesCollection: UICollectionViewDelegateFlowLayout {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
+        let layout = collectionViewLayout as? UICollectionViewFlowLayout
+        let collectionWidth = collectionView.frame.width
+        let horizontalPadding = layout?.sectionInset.horizontal ?? 0
+        let interitemSpacing = layout?.minimumInteritemSpacing ?? 0
+        let itemsPerRow: CGFloat = 2
+        let width = (collectionWidth - horizontalPadding - interitemSpacing * (itemsPerRow - 1)) / itemsPerRow
+        return .init(width: width, height: width * 0.6)
+    }
 }
 
 extension LocalImagesCollection: UICollectionViewDataSource {
