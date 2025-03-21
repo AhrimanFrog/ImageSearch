@@ -5,7 +5,7 @@ import Combine
 class LocalImagesCollection: UICollectionView {
     private let dataProvider: LocalImageDataProvider
     let assets = CurrentValueSubject<PHFetchResult<PHAsset>, Never>(.init())
-    
+
     private var dataSubscriptions = Set<AnyCancellable>()
 
     init(dataProvider: (some LocalImageDataProvider)) {
@@ -20,12 +20,13 @@ class LocalImagesCollection: UICollectionView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     private func bind() {
-        assets.sink { [weak self] _ in self?.reloadData() }.store(in: &dataSubscriptions)
+        assets.sink { [weak self] _ in DispatchQueue.main.async { self?.reloadData() } }.store(in: &dataSubscriptions)
         dataProvider.libraryChangesPublisher
-            .sink { change in
-                print(change)
+            .sink { [weak self] changeInstance in
+                guard let self, let changes = changeInstance.changeDetails(for: assets.value) else { return }
+                assets.send(changes.fetchResultAfterChanges)
             }
             .store(in: &dataSubscriptions)
     }

@@ -1,6 +1,6 @@
 import UIKit
 
-class LocalSearchCoordinator: Coordinator {    
+class LocalSearchCoordinator: Coordinator {
     enum Destination {
         case localPhotos
         case transformation(UIImage)
@@ -21,9 +21,11 @@ class LocalSearchCoordinator: Coordinator {
         navigationController.isNavigationBarHidden = true
     }
 
-    func start() {}
+    func start() {
+        screenFactory.navigationHandler = self
+    }
 
-    func navigate(to screen: Destination) { // swiftlint:disable:this identifier_name
+    func navigate(to screen: Destination) {
         switch screen {
         case .localPhotos: navigationController.dismiss(animated: true)
         case .transformation: navigationController.present(screenFactory.build(screen: screen), animated: true)
