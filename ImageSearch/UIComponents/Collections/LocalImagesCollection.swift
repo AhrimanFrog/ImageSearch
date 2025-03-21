@@ -7,6 +7,7 @@ class LocalImagesCollection: UICollectionView {
     let assets = CurrentValueSubject<PHFetchResult<PHAsset>, Never>(.init())
 
     private var dataSubscriptions = Set<AnyCancellable>()
+    private var cellWidth: Double?
 
     init(dataProvider: (some LocalImageDataProvider)) {
         self.dataProvider = dataProvider
@@ -38,12 +39,16 @@ extension LocalImagesCollection: UICollectionViewDelegateFlowLayout {
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
+        if let cachedWidth = cellWidth {
+            return .init(width: cachedWidth, height: cachedWidth * 0.6)
+        }
         let layout = collectionViewLayout as? UICollectionViewFlowLayout
         let collectionWidth = collectionView.frame.width
         let horizontalPadding = layout?.sectionInset.horizontal ?? 0
         let interitemSpacing = layout?.minimumInteritemSpacing ?? 0
         let itemsPerRow: CGFloat = 2
         let width = (collectionWidth - horizontalPadding - interitemSpacing * (itemsPerRow - 1)) / itemsPerRow
+        cellWidth = width
         return .init(width: width, height: width * 0.6)
     }
 
