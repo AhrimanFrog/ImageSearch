@@ -3,6 +3,8 @@ import UIKit
 class MainCoordinator: Coordinator {
     var children: [Coordinator] = []
 
+    var mainController: UIViewController { tabBarController }
+
     private let window: UIWindow
     private let tabBarController: UITabBarController
 
@@ -21,7 +23,7 @@ class MainCoordinator: Coordinator {
         localCoordinator.start()
         children = [networkCoordinator, localCoordinator]
         tabBarController.setViewControllers(
-            [networkCoordinator.navigationController, localCoordinator.navigationController],
+            [networkCoordinator.mainController, localCoordinator.mainController],
             animated: true
         )
         window.makeKeyAndVisible()

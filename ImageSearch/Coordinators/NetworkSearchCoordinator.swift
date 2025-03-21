@@ -13,8 +13,10 @@ class NetworkSearchCoordinator: Coordinator {
         case present(UIViewController), dismiss
     }
 
+    var mainController: UIViewController { navigationController }
+
     private let screenFactory: NetwrokScreenFactory
-    let navigationController: UINavigationController
+    private let navigationController: UINavigationController
 
     init() {
         screenFactory = NetwrokScreenFactory()
@@ -56,12 +58,6 @@ class NetworkSearchCoordinator: Coordinator {
         case .dismiss: navigationController.dismiss(animated: true)
         case .present(let controller): navigationController.present(controller, animated: true)
         }
-    }
-
-    func handleError(with text: String) {
-        let alert = UIAlertController(title: "Oops!", message: text, preferredStyle: .alert)
-        alert.addAction(.init(title: "OK", style: .default))
-        navigationController.present(alert, animated: true)
     }
 
     func share(image: UIImage, link: String) {

@@ -2,6 +2,7 @@ import UIKit
 import SnapKit
 import Photos
 import CropViewController
+import Combine
 
 class LocalPhotosScreen: ISScreen<LocalPhotosViewModel> {
     private let collectionView: LocalImagesCollection
@@ -9,9 +10,6 @@ class LocalPhotosScreen: ISScreen<LocalPhotosViewModel> {
     override init(viewModel: LocalPhotosViewModel) {
         self.collectionView = .init(dataProvider: viewModel)
         super.init(viewModel: viewModel)
-        viewModel.openCropScreen = { [weak self] image in // will be moved to coordinator
-            self?.owner?.present(ImageCropScreen(image: image, library: .shared()), animated: true)
-        }
         configure()
     }
 
@@ -35,6 +33,7 @@ class LocalPhotosScreen: ISScreen<LocalPhotosViewModel> {
     }
 
     private func showUserPhotos() {
+        collectionView.assets.send(viewModel.fetchAssets())
     }
 
     private func configure() {
@@ -43,13 +42,15 @@ class LocalPhotosScreen: ISScreen<LocalPhotosViewModel> {
     }
 }
 
-class LocalPhotosViewModel: NSObject, ViewModel {
-    private let imageManager: PHImageManager // maybe better if changed to protocol
-
+class LocalPhotosViewModel: NSObject, ViewModel, LocalImageDataProvider {
+    let libraryChangesPublisher = PassthroughSubject<PHChange, Never>()
     var openCropScreen: ((UIImage) -> Void)?
 
-    init(imageManager: PHImageManager = .default()) {
+    private let imageManager: PHImageManager // maybe better if changed to protocol
+
+    init(imageManager: PHImageManager, openCropScreen: @escaping (UIImage) -> Void) {
         self.imageManager = imageManager
+        self.openCropScreen = openCropScreen
         super.init()
     }
 
@@ -66,5 +67,11 @@ class LocalPhotosViewModel: NSObject, ViewModel {
 
     func cancelRequest(_ code: PHImageRequestID) {
         imageManager.cancelImageRequest(code)
+    }
+}
+
+extension LocalPhotosViewModel: PHPhotoLibraryChangeObserver {
+    func photoLibraryDidChange(_ changeInstance: PHChange) {
+        libraryChangesPublisher.send(changeInstance)
     }
 }
