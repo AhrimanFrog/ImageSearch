@@ -18,7 +18,7 @@ Clone project using
 
 Open project in Xcode
 
-Wait until package manager resolve dependencies
+Wait until package manager resolves dependencies
 
 Replace `<your_key>` with your API key in Config.xcconfig file
 
