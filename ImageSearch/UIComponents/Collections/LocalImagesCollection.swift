@@ -23,7 +23,10 @@ class LocalImagesCollection: UICollectionView {
     }
 
     private func bind() {
-        assets.sink { [weak self] _ in DispatchQueue.main.async { self?.reloadData() } }.store(in: &dataSubscriptions)
+        assets
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in self?.reloadData() }
+            .store(in: &dataSubscriptions)
         dataProvider.libraryChangesPublisher
             .sink { [weak self] changeInstance in
                 guard let self, let changes = changeInstance.changeDetails(for: assets.value) else { return }

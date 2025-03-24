@@ -13,9 +13,12 @@ class LocalScreenFactory {
             let viewModel = LocalPhotosViewModel(imageManager: imageManager) { [weak self] image in
                 self?.navigationHandler?.navigate(to: .transformation(image))
             }
+            library.register(viewModel)
             return HostingController(contentView: LocalPhotosScreen(viewModel: viewModel))
         case .transformation(let image):
-            return ImageCropScreen(image: image, library: library)
+            return ImageCropScreen(image: image, library: library) { [weak self] in
+                self?.navigationHandler?.handleError(with: $0)
+            }
         }
     }
 }
