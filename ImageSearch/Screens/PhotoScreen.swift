@@ -143,7 +143,7 @@ class PhotoScreen: ISScreen<PhotoScreenViewModel> {
     }
 }
 
-class PhotoScreenViewModel: ViewModel, DataProvider {
+class PhotoScreenViewModel: ViewModel, NetworkDataProvider {
     struct Dependencies {
         let networkManager: NetworkManager
         let preferences: CurrentValueSubject<Preferences, Never>

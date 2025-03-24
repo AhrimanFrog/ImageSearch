@@ -10,6 +10,9 @@ extension UIImage {
         case close = "xmark.circle"
         case down = "chevron.down"
         case picker = "chevron.up.chevron.down"
+        case change = "crop.rotate"
+        case photoAccessDenied = "eye.slash"
+        case settings = "gearshape"
     }
 
     convenience init?(sfImage: SFImage) {

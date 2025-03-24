@@ -1,13 +1,13 @@
 import UIKit
 import Combine
 
-class ScreenFactory {
-    weak var navigationHandler: MainCoordinator?
+class NetwrokScreenFactory {
+    weak var navigationHandler: NetworkSearchCoordinator?
 
     private let networkManager = NetworkManager()
     private let preferencesPublisher = CurrentValueSubject<Preferences, Never>(.init())
 
-    func build(screen: MainCoordinator.Destination) -> UIViewController {
+    func build(screen: NetworkSearchCoordinator.Destination) -> UIViewController {
         let controller = switch screen {
         case .start: HostingController(contentView: titleScreen())
         case let .results(response, request): HostingController(contentView: resultsScreen(response, request))
@@ -25,10 +25,8 @@ class ScreenFactory {
             preferences: preferencesPublisher
         ) { [weak self] result in
             switch result {
-            case let .success((response, request)):
-                self?.navigationHandler?.navigate(to: .results(response, request))
-            case .failure(let error):
-                self?.navigationHandler?.handleError(with: error.errorDescription)
+            case let .success((response, request)): self?.navigationHandler?.navigate(to: .results(response, request))
+            case .failure(let error): self?.navigationHandler?.handleError(with: error.errorDescription)
             }
         }
         return TitleSearchScreen(viewModel: titleViewModel)

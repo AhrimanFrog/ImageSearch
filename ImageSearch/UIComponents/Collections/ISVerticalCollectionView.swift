@@ -2,12 +2,12 @@ import UIKit
 import Combine
 
 class ISVerticalCollectionView: UICollectionView {
-    private var dataProvider: DataProvider
+    private var dataProvider: NetworkDataProvider
     private var diffDataSource: UICollectionViewDiffableDataSource<String, ISImage>?
     private var dataSubscription: AnyCancellable?
 
     convenience init(
-        dataProvider: DataProvider,
+        dataProvider: NetworkDataProvider,
         layout: UICollectionViewLayout,
         cellType: (some ISMediaCell).Type
     ) {
@@ -23,7 +23,7 @@ class ISVerticalCollectionView: UICollectionView {
         }
     }
 
-    init(dataProvider: DataProvider, layout: UICollectionViewLayout) {
+    init(dataProvider: NetworkDataProvider, layout: UICollectionViewLayout) {
         self.dataProvider = dataProvider
         super.init(frame: .zero, collectionViewLayout: layout)
         backgroundColor = .systemGray5

@@ -13,6 +13,8 @@
 		D51BDDE32D4BCF7F00F6DEDD /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = D51BDDE22D4BCF7F00F6DEDD /* SnapKit */; };
 		D5233C052D6F970000F8132F /* Hero in Frameworks */ = {isa = PBXBuildFile; productRef = D5233C042D6F970000F8132F /* Hero */; };
 		D5233CFA2D7B3E4000F8132F /* IQKeyboardManagerSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D5233CF92D7B3E4000F8132F /* IQKeyboardManagerSwift */; };
+		D524FBAA2D88753900010D53 /* TOCropViewController in Frameworks */ = {isa = PBXBuildFile; productRef = D524FBA92D88753900010D53 /* TOCropViewController */; };
+		D524FBB22D8C51E800010D53 /* CropViewController in Frameworks */ = {isa = PBXBuildFile; productRef = D524FBB12D8C51E800010D53 /* CropViewController */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -92,6 +94,8 @@
 			files = (
 				D5233C052D6F970000F8132F /* Hero in Frameworks */,
 				D51BDDE32D4BCF7F00F6DEDD /* SnapKit in Frameworks */,
+				D524FBAA2D88753900010D53 /* TOCropViewController in Frameworks */,
+				D524FBB22D8C51E800010D53 /* CropViewController in Frameworks */,
 				D5233CFA2D7B3E4000F8132F /* IQKeyboardManagerSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -169,6 +173,8 @@
 				D51BDDE22D4BCF7F00F6DEDD /* SnapKit */,
 				D5233C042D6F970000F8132F /* Hero */,
 				D5233CF92D7B3E4000F8132F /* IQKeyboardManagerSwift */,
+				D524FBA92D88753900010D53 /* TOCropViewController */,
+				D524FBB12D8C51E800010D53 /* CropViewController */,
 			);
 			productName = ImageSearch;
 			productReference = D51BDB372D46E20E00F6DEDD /* ImageSearch.app */;
@@ -257,6 +263,7 @@
 				D51BDDE02D4BCF5700F6DEDD /* XCRemoteSwiftPackageReference "SnapKit" */,
 				D5233C032D6F96EF00F8132F /* XCRemoteSwiftPackageReference "Hero" */,
 				D5233CF82D7B3E1900F8132F /* XCRemoteSwiftPackageReference "IQKeyboardManager" */,
+				D524FBA82D88752800010D53 /* XCRemoteSwiftPackageReference "TOCropViewController" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = D51BDB382D46E20E00F6DEDD /* Products */;
@@ -676,6 +683,14 @@
 				minimumVersion = 8.0.0;
 			};
 		};
+		D524FBA82D88752800010D53 /* XCRemoteSwiftPackageReference "TOCropViewController" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/TimOliver/TOCropViewController";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.7.4;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -693,6 +708,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = D5233CF82D7B3E1900F8132F /* XCRemoteSwiftPackageReference "IQKeyboardManager" */;
 			productName = IQKeyboardManagerSwift;
+		};
+		D524FBA92D88753900010D53 /* TOCropViewController */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D524FBA82D88752800010D53 /* XCRemoteSwiftPackageReference "TOCropViewController" */;
+			productName = TOCropViewController;
+		};
+		D524FBB12D8C51E800010D53 /* CropViewController */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D524FBA82D88752800010D53 /* XCRemoteSwiftPackageReference "TOCropViewController" */;
+			productName = CropViewController;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

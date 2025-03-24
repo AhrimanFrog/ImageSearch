@@ -47,6 +47,7 @@ final class TitleSearchScreen: ISScreen<TitleSearchViewModel> {
     }
 
     private func configure() {
+        backgroundColor = .black
         backgroundImage.image = .init(resource: .titleBackground)
         backgroundImage.alpha = 0.5
     }

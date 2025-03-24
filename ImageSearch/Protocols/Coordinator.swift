@@ -1,6 +1,15 @@
+import UIKit
+
 protocol Coordinator {
-    associatedtype NavigationDestination
+    var mainController: UIViewController { get }
     func start()
-    func navigate(to: NavigationDestination) // swiftlint:disable:this identifier_name
     func handleError(with: String)
+}
+
+extension Coordinator {
+    func handleError(with text: String) {
+        let alert = UIAlertController(title: "Oops!", message: text, preferredStyle: .alert)
+        alert.addAction(.init(title: "OK", style: .default))
+        mainController.present(alert, animated: true)
+    }
 }

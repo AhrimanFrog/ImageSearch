@@ -97,7 +97,7 @@ final class SearchResultsScreen: ISScreen<SearchResultsViewModel> {
     }
 }
 
-final class SearchResultsViewModel: ViewModel, DataProvider {
+final class SearchResultsViewModel: ViewModel, NetworkDataProvider {
     private static let maximumTags = 8
 
     struct Dependencies {
