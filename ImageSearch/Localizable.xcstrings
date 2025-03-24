@@ -155,6 +155,23 @@
         }
       }
     },
+    "grant_access" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grant access to gallery to get ability to crop and rotate images"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Надайте доступ до галереї щоб мати змогу обрізати та перевертати фото"
+          }
+        }
+      }
+    },
     "horizontal" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -524,6 +541,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Відправте свою аудиторію у візуальну пригоду"
+          }
+        }
+      }
+    },
+    "to_settings" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grant Permission"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Надати Дозвіл"
           }
         }
       }

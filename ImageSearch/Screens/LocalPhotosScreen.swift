@@ -6,11 +6,14 @@ import Combine
 
 class LocalPhotosScreen: ISScreen<LocalPhotosViewModel> {
     private let collectionView: LocalImagesCollection
+    private var authorizationStatusSubscrioption: AnyCancellable?
+    private let accessDeniedView = AccessDeniedView()
 
     override init(viewModel: LocalPhotosViewModel) {
         self.collectionView = .init(dataProvider: viewModel)
         super.init(viewModel: viewModel)
         configure()
+        authorizationStatusSubscrioption = getStatusSubscription()
     }
 
     @MainActor
@@ -20,31 +23,50 @@ class LocalPhotosScreen: ISScreen<LocalPhotosViewModel> {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        PHPhotoLibrary.requestAuthorization(for: .readWrite) { [weak self] status in
-            switch status {
-            case .notDetermined, .denied, .restricted: self?.showEmptyView()
-            case .limited, .authorized: self?.showUserPhotos()
-            default: self?.showEmptyView()
+        authorizationStatusDidChange(PHPhotoLibrary.authorizationStatus(for: .readWrite))
+    }
+
+    private func getStatusSubscription() -> AnyCancellable {
+        return viewModel.$librabryAccessStatus
+            .dropFirst()
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] newStatus in
+                guard let self, viewModel.librabryAccessStatus != newStatus else { return }
+                authorizationStatusDidChange(newStatus)
             }
+    }
+
+    private func authorizationStatusDidChange(_ status: PHAuthorizationStatus) {
+        switch status {
+        case .notDetermined: PHPhotoLibrary.requestAuthorization(for: .readWrite) { [weak self] in
+            self?.viewModel.librabryAccessStatus = $0
+        }
+        case .denied, .restricted: showAccessDeniedView()
+        case .limited, .authorized: showUserPhotos()
+        default: showAccessDeniedView()
         }
     }
 
-    private func showEmptyView() {
+    private func showAccessDeniedView() {
+        accessDeniedView.isHidden = false
     }
 
     private func showUserPhotos() {
+        accessDeniedView.isHidden = true
         collectionView.assets.send(viewModel.fetchAssets())
     }
 
     private func configure() {
-        addSubview(collectionView)
+        addSubviews(collectionView, accessDeniedView)
         collectionView.snp.makeConstraints { $0.edges.equalTo(safeAreaLayoutGuide) }
+        accessDeniedView.snp.makeConstraints { $0.edges.equalTo(safeAreaLayoutGuide) }
     }
 }
 
 class LocalPhotosViewModel: NSObject, ViewModel, LocalImageDataProvider {
     let libraryChangesPublisher = PassthroughSubject<PHChange, Never>()
     var openCropScreen: ((UIImage) -> Void)?
+    @Published var librabryAccessStatus: PHAuthorizationStatus = .denied
 
     private let imageManager: PHImageManager // maybe better if changed to protocol
 
@@ -72,6 +94,7 @@ class LocalPhotosViewModel: NSObject, ViewModel, LocalImageDataProvider {
 
 extension LocalPhotosViewModel: PHPhotoLibraryChangeObserver {
     func photoLibraryDidChange(_ changeInstance: PHChange) {
+        librabryAccessStatus = PHPhotoLibrary.authorizationStatus(for: .readWrite)
         libraryChangesPublisher.send(changeInstance)
     }
 }
