@@ -30,10 +30,8 @@ class LocalPhotosScreen: ISScreen<LocalPhotosViewModel> {
         return viewModel.$librabryAccessStatus
             .dropFirst()
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] newStatus in
-                guard let self, viewModel.librabryAccessStatus != newStatus else { return }
-                authorizationStatusDidChange(newStatus)
-            }
+            .removeDuplicates()
+            .sink { [weak self] in self?.authorizationStatusDidChange($0) }
     }
 
     private func authorizationStatusDidChange(_ status: PHAuthorizationStatus) {

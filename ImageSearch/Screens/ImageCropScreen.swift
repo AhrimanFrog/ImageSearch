@@ -6,25 +6,20 @@ class ImageCropScreen: CropViewController {
     private var croppedImage: UIImage?
     private let library: PHPhotoLibrary
     private let errorHandler: (String) -> Void
-    private var saveAllowed = false
 
     init(image: UIImage, library: PHPhotoLibrary, errorHandler: @escaping (String) -> Void) {
         self.library = library
         self.errorHandler = errorHandler
         super.init(image: image)
-        delegate = self
+        onDidCropToRect = saveToLibrary
     }
 
     @MainActor
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-}
 
-extension ImageCropScreen: CropViewControllerDelegate {
-    func cropViewController(_: CropViewController, didCropToImage image: UIImage, withRect: CGRect, angle: Int) {
-        saveAllowed.toggle() // because of library bug when delegate method is called twice
-        guard saveAllowed else { return }
+    private func saveToLibrary(_ image: UIImage, _: CGRect, _: Int) {
         library.performChanges(
             { PHAssetChangeRequest.creationRequestForAsset(from: image) },
             completionHandler: { [weak self] success, error in
