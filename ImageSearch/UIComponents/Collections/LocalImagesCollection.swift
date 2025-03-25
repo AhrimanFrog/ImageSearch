@@ -33,8 +33,11 @@ class LocalImagesCollection: UICollectionView {
                 assets.send(changes.fetchResultAfterChanges)
             }
             .store(in: &dataSubscriptions)
-        UIDevice.current.publisher(for: \.orientation)
-            .sink { [weak self] _ in self?.cellWidth = nil }
+        NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)
+            .sink { [weak self] _ in
+                self?.cellWidth = nil
+                self?.reloadData()
+            }
             .store(in: &dataSubscriptions)
     }
 }
