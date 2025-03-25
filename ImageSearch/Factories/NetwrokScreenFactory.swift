@@ -1,10 +1,12 @@
 import UIKit
 import Combine
+import Photos
 
 class NetwrokScreenFactory {
     weak var navigationHandler: NetworkSearchCoordinator?
 
     private let networkManager = NetworkManager()
+    private let photoLibrary = PHPhotoLibrary.shared()
     private let preferencesPublisher = CurrentValueSubject<Preferences, Never>(.init())
 
     func build(screen: NetworkSearchCoordinator.Destination) -> UIViewController {
@@ -50,6 +52,7 @@ class NetwrokScreenFactory {
             preferences: preferencesPublisher,
             topImage: mainImage,
             related: related,
+            library: photoLibrary,
             navigationHandler: { [weak self] in self?.navigationHandler?.recieveStateChange($0) },
             share: { [weak self] image, link in self?.navigationHandler?.share(image: image, link: link) }
         )

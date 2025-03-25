@@ -2,6 +2,7 @@ import UIKit
 import SnapKit
 import Combine
 import Hero
+import Photos
 
 class PhotoScreen: ISScreen<PhotoScreenViewModel> {
     private let topBanner = UIView()
@@ -54,8 +55,14 @@ class PhotoScreen: ISScreen<PhotoScreenViewModel> {
 
         photoInfoBlock.downloadButton.addAction(
             UIAction { [weak self] _ in
-                guard let self, let image = photoImage.image else { return }
-                viewModel.downloadImageToGallery(image) { [weak self] in self?.animateSuccessfulSaving() }
+                guard let image = self?.photoImage.image else { return }
+                self?.viewModel.library.saveImage(image) { success, error in
+                    guard !success, let error else {
+                        DispatchQueue.main.async { self?.animateSuccessfulSaving() }
+                        return
+                    }
+                    self?.viewModel.navigationHandler(.failure(error))
+                }
             },
             for: .touchUpInside
         )
@@ -149,25 +156,23 @@ class PhotoScreenViewModel: ViewModel, NetworkDataProvider {
         let preferences: CurrentValueSubject<Preferences, Never>
         let topImage: ISImage
         let related: [ISImage]
+        let library: PHPhotoLibrary
         let navigationHandler: NavigationHandler
         let share: (UIImage, String) -> Void
     }
 
     let images: CurrentValueSubject<[ISImage], Never>
     let topImage: CurrentValueSubject<ISImage, Never>
-    let share: (UIImage, String) -> Void
-    private let navigationHandler: NavigationHandler
-    private let preferences: CurrentValueSubject<Preferences, Never>
-    private let networkManager: NetworkManager
+    var share: (UIImage, String) -> Void { dependencies.share }
+    var library: PHPhotoLibrary { dependencies.library }
+    var navigationHandler: NavigationHandler { dependencies.navigationHandler }
+    private let dependencies: Dependencies
     private var disposalBag = Set<AnyCancellable>()
 
     init(dependencies: Dependencies) {
         topImage = .init(dependencies.topImage)
         images = .init(dependencies.related)
-        networkManager = dependencies.networkManager
-        navigationHandler = dependencies.navigationHandler
-        share = dependencies.share
-        preferences = dependencies.preferences
+        self.dependencies = dependencies
     }
 
     func returnToHomeScreen() {
@@ -176,7 +181,7 @@ class PhotoScreenViewModel: ViewModel, NetworkDataProvider {
 
     func openPhotoScreen(forPhoto photo: ISImage) {
         guard let tag = photo.formattedTags.first else { return }
-        networkManager.getImages(query: tag, page: 1, userPreferences: preferences.value)
+        dependencies.networkManager.getImages(query: tag, page: 1, userPreferences: dependencies.preferences.value)
             .sink { [weak self] result in
                 switch result {
                 case .success(let response): self?.images.send(response.hits)
@@ -193,12 +198,12 @@ class PhotoScreenViewModel: ViewModel, NetworkDataProvider {
     }
 
     func imagePublisher(for model: ISImage) -> AnyPublisher<UIImage, Never> {
-        return networkManager.downloadImage(from: model.largeImageURL)
+        return dependencies.networkManager.downloadImage(from: model.largeImageURL)
     }
 
     func openResultsOfQuery(_ query: String) {
-        networkManager
-            .getImages(query: query, page: 1, userPreferences: preferences.value)
+        dependencies.networkManager
+            .getImages(query: query, page: 1, userPreferences: dependencies.preferences.value)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] result in
                 switch result {
@@ -215,20 +220,5 @@ class PhotoScreenViewModel: ViewModel, NetworkDataProvider {
 
     func openPreferences() {
         navigationHandler(.success(.preferences))
-    }
-
-    func downloadImageToGallery(_ image: UIImage, successfulSaveHandler: @escaping () -> Void) {
-        UIImageWriteToSavedPhotosAlbum(
-            image, nil, #selector(handleImageSaving(image:didFinishSavingWithError:contextInfo:)), nil
-        )
-        DispatchQueue.main.async { successfulSaveHandler() }
-    }
-
-    @objc private func handleImageSaving(
-        image: UIImage,
-        didFinishSavingWithError error: Error?,
-        contextInfo: UnsafeRawPointer
-    ) {
-        print(error?.localizedDescription ?? "No Error")
     }
 }

@@ -1,1 +1,1 @@
-typealias NavigationHandler = (Result<NetworkSearchCoordinator.Destination, ISNetworkError>) -> Void
+typealias NavigationHandler = (Result<NetworkSearchCoordinator.Destination, any Error>) -> Void

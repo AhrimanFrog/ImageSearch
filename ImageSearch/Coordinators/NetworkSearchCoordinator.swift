@@ -33,10 +33,10 @@ class NetworkSearchCoordinator: Coordinator {
         navigationController.setNavigationBarHidden(true, animated: false)
     }
 
-    func recieveStateChange<Error: LocalizedError>(_ change: Result<Destination, Error>) {
+    func recieveStateChange(_ change: Result<Destination, any Error>) {
         switch change {
         case .success(let destination): navigate(to: destination)
-        case .failure(let error): handleError(with: error.errorDescription ?? "Unknown error")
+        case .failure(let error): handleError(with: error.localizedDescription)
         }
     }
 

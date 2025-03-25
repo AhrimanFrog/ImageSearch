@@ -20,15 +20,12 @@ class ImageCropScreen: CropViewController {
     }
 
     private func saveToLibrary(_ image: UIImage, _: CGRect, _: Int) {
-        library.performChanges(
-            { PHAssetChangeRequest.creationRequestForAsset(from: image) },
-            completionHandler: { [weak self] success, error in
-                guard !success, let error else {
-                    DispatchQueue.main.async { self?.dismiss(animated: true) }
-                    return
-                }
-                self?.errorHandler(error.localizedDescription)
+        library.saveImage(image) { [weak self] success, error in
+            guard !success, let error else {
+                DispatchQueue.main.async { self?.dismiss(animated: true) }
+                return
             }
-        )
+            self?.errorHandler(error.localizedDescription)
+        }
     }
 }

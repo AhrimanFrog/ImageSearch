@@ -16,4 +16,6 @@ enum ISNetworkError: LocalizedError, Equatable {
         case .wrongStatusCode(let code): String(localized: "wrong_code_\(code)")
         }
     }
+
+    var localizedDescription: String { errorDescription }
 }
