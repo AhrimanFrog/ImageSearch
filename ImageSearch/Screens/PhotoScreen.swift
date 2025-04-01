@@ -10,6 +10,7 @@ class PhotoScreen: ISScreen<PhotoScreenViewModel> {
     private let header = ISHeaderBlock()
     private let photoImage = UIImageView()
     private let zoomButton = ISGreyButton(image: UIImage(sfImage: .zoomIn))
+    private let cropButton = ISGreyButton(image: UIImage(sfImage: .crop))
     private let photoInfoBlock = ISPhotoInfoBlock(frame: .zero)
     private let relatedLabel = ISInfoLabel()
     private let relatedCollection: ISVerticalCollectionView
@@ -80,7 +81,7 @@ class PhotoScreen: ISScreen<PhotoScreenViewModel> {
 
     private func animateSuccessfulSaving() {
         photoSavedView.alpha = 1
-        UIView.animate(withDuration: 2) { [weak self] in self?.photoSavedView.alpha = 0.0 }
+        UIView.animate(withDuration: 4) { [weak self] in self?.photoSavedView.alpha = 0.0 }
     }
 
     private func configure() {
@@ -97,6 +98,7 @@ class PhotoScreen: ISScreen<PhotoScreenViewModel> {
             header,
             photoImage,
             zoomButton,
+            cropButton,
             photoInfoBlock,
             relatedLabel,
             relatedCollection,
@@ -124,6 +126,11 @@ class PhotoScreen: ISScreen<PhotoScreenViewModel> {
         zoomButton.snp.makeConstraints { make in
             make.width.height.equalTo(32)
             make.trailing.bottom.equalTo(photoImage).inset(20)
+        }
+
+        cropButton.snp.makeConstraints { make in
+            make.width.height.trailing.equalTo(zoomButton)
+            make.bottom.equalTo(zoomButton.snp.top).offset(-20)
         }
 
         photoInfoBlock.snp.makeConstraints { make in

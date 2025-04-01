@@ -13,6 +13,7 @@ extension UIImage {
         case change = "crop.rotate"
         case photoAccessDenied = "eye.slash"
         case settings = "gearshape"
+        case crop = "crop"
     }
 
     convenience init?(sfImage: SFImage) {

@@ -36,7 +36,7 @@ class LocalImagesCollection: UICollectionView {
         NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)
             .sink { [weak self] _ in
                 self?.cellWidth = nil
-                self?.reloadData()
+                self?.collectionViewLayout.invalidateLayout()
             }
             .store(in: &dataSubscriptions)
     }
