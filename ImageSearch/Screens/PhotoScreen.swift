@@ -77,6 +77,14 @@ class PhotoScreen: ISScreen<PhotoScreenViewModel> {
             UIAction { [weak self] _ in self?.viewModel.zoomPhoto(self?.photoImage.image) },
             for: .touchUpInside
         )
+
+        cropButton.addAction(
+            UIAction { [weak self] _ in
+                guard let image = self?.photoImage.image else { return }
+                self?.viewModel.cropImage(image)
+            },
+            for: .touchUpInside
+        )
     }
 
     private func animateSuccessfulSaving() {
@@ -223,6 +231,10 @@ class PhotoScreenViewModel: ViewModel, NetworkDataProvider {
 
     func zoomPhoto(_ photo: UIImage?) {
         navigationHandler(.success(.zoom(photo)))
+    }
+
+    func cropImage(_ image: UIImage) {
+        navigationHandler(.success(.crop(image)))
     }
 
     func openPreferences() {

@@ -3,7 +3,6 @@ import UIKit
 import Photos
 
 class ImageCropScreen: CropViewController {
-    private var croppedImage: UIImage?
     private let library: PHPhotoLibrary
     private let errorHandler: (String) -> Void
 

@@ -6,6 +6,7 @@ class NetworkSearchCoordinator: Coordinator {
         case results(APIImagesResponse, String)
         case photo(ISImage, [ISImage])
         case zoom(UIImage?)
+        case crop(UIImage)
         case preferences
     }
 
@@ -44,7 +45,7 @@ class NetworkSearchCoordinator: Coordinator {
         switch destination {
         case .start:
             navigationController.popToRootViewController(animated: true)
-        case .zoom, .preferences:
+        case .zoom, .preferences, .crop:
             let screen = screenFactory.build(screen: destination)
             screen.modalPresentationStyle = .fullScreen
             navigationController.present(screen, animated: true)

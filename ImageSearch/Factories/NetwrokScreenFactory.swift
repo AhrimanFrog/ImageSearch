@@ -15,6 +15,7 @@ class NetwrokScreenFactory {
         case let .results(response, request): HostingController(contentView: resultsScreen(response, request))
         case let .photo(mainImage, related): HostingController(contentView: photoScreen(mainImage, related))
         case let .zoom(image): HostingController(contentView: zoomScreen(image: image))
+        case let .crop(image): cropScreen(image: image)
         case .preferences: HostingController(contentView: preferencesScreen())
         }
         controller.isHeroEnabled = true
@@ -61,6 +62,12 @@ class NetwrokScreenFactory {
 
     private func zoomScreen(image: UIImage?) -> ZoomScreen {
         return ZoomScreen(image: image) { [weak self] in self?.navigationHandler?.modalController(toState: .dismiss) }
+    }
+
+    private func cropScreen(image: UIImage) -> ImageCropScreen {
+        return ImageCropScreen(image: image, library: photoLibrary) { [weak self] in
+            self?.navigationHandler?.handleError(with: $0)
+        }
     }
 
     private func preferencesScreen() -> PreferencesScreen {
