@@ -45,7 +45,7 @@ class NetworkSearchCoordinator: Coordinator {
         switch destination {
         case .start:
             navigationController.popToRootViewController(animated: true)
-        case .zoom, .preferences, .crop:
+        case .zoom, .preferences:
             let screen = screenFactory.build(screen: destination)
             screen.modalPresentationStyle = .fullScreen
             navigationController.present(screen, animated: true)

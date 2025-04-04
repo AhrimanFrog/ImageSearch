@@ -65,9 +65,16 @@ class NetwrokScreenFactory {
     }
 
     private func cropScreen(image: UIImage) -> ImageCropScreen {
-        return ImageCropScreen(image: image, library: photoLibrary) { [weak self] in
-            self?.navigationHandler?.handleError(with: $0)
-        }
+        let dependencies = ImageCropScreen.CropControllerDependencies(
+            image: image, library: photoLibrary
+        ) { [weak self] in self?.navigationHandler?.handleError(with: $0) }
+        let viewModel = ImageCropViewModel(
+            dependencies: .init(
+                networkManager: networkManager,
+                preferences: preferencesPublisher.value
+            ) { [weak self] in self?.navigationHandler?.recieveStateChange($0) }
+        )
+        return ImageCropScreen(dependencies: dependencies, viewModel: viewModel)
     }
 
     private func preferencesScreen() -> PreferencesScreen {
