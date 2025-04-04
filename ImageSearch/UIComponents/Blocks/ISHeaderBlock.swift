@@ -7,9 +7,12 @@ class ISHeaderBlock: UIView {
     let preferencesButton = UIButton()
     private let bottonLine = UIView()
 
+    weak var delegate: HeaderViewDelegate?
+
     init() {
         super.init(frame: .zero)
         configure()
+        bindNavigation()
         setConstraints()
     }
 
@@ -22,6 +25,18 @@ class ISHeaderBlock: UIView {
         bottonLine.backgroundColor = .systemGray2
         homeButton.setBackgroundImage(.logo, for: .normal)
         preferencesButton.setBackgroundImage(.filters, for: .normal)
+    }
+
+    private func bindNavigation() {
+        homeButton.addAction(
+            UIAction { [weak self] _ in self?.delegate?.navigationHandler(.success(.start)) },
+            for: .touchUpInside
+        )
+        preferencesButton.addAction(
+            UIAction { [weak self]  _ in self?.delegate?.navigationHandler(.success(.preferences)) },
+            for: .touchUpInside
+        )
+        searchField.addInputProcessor { [weak self] input in self?.delegate?.displayResults(of: input) }
     }
 
     private func setConstraints() {

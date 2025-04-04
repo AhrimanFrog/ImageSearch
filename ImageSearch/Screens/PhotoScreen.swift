@@ -35,6 +35,8 @@ class PhotoScreen: ISScreen<PhotoScreenViewModel> {
     }
 
     private func bindViewModel() {
+        header.delegate = viewModel
+
         viewModel.topImage
             .flatMap { [weak self, viewModel] imageModel in
                 self?.photoInfoBlock.setImageFormat(toFormatOf: imageModel)
@@ -43,16 +45,6 @@ class PhotoScreen: ISScreen<PhotoScreenViewModel> {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] newImage in self?.photoImage.image = newImage }
             .store(in: &disposalBag)
-
-        header.homeButton.addAction(
-            UIAction { [weak self] _ in self?.viewModel.returnToHomeScreen() },
-            for: .touchUpInside
-        )
-        header.preferencesButton.addAction(
-            UIAction { [weak self] _ in self?.viewModel.openPreferences() },
-            for: .touchUpInside
-        )
-        header.searchField.addInputProcessor { [weak self] input in self?.viewModel.openResultsOfQuery(input) }
 
         photoInfoBlock.downloadButton.addAction(
             UIAction { [weak self] _ in
@@ -165,7 +157,7 @@ class PhotoScreen: ISScreen<PhotoScreenViewModel> {
     }
 }
 
-class PhotoScreenViewModel: ViewModel, NetworkDataProvider {
+class PhotoScreenViewModel: ViewModel, NetworkDataProvider, HeaderViewDelegate {
     struct Dependencies {
         let networkManager: NetworkManager
         let preferences: CurrentValueSubject<Preferences, Never>
@@ -190,10 +182,6 @@ class PhotoScreenViewModel: ViewModel, NetworkDataProvider {
         self.dependencies = dependencies
     }
 
-    func returnToHomeScreen() {
-        navigationHandler(.success(.start))
-    }
-
     func openPhotoScreen(forPhoto photo: ISImage) {
         guard let tag = photo.formattedTags.first else { return }
         dependencies.networkManager.getImages(query: tag, page: 1, userPreferences: dependencies.preferences.value)
@@ -216,7 +204,7 @@ class PhotoScreenViewModel: ViewModel, NetworkDataProvider {
         return dependencies.networkManager.downloadImage(from: model.largeImageURL)
     }
 
-    func openResultsOfQuery(_ query: String) {
+    func displayResults(of query: String) {
         dependencies.networkManager
             .getImages(query: query, page: 1, userPreferences: dependencies.preferences.value)
             .receive(on: DispatchQueue.main)
@@ -235,9 +223,5 @@ class PhotoScreenViewModel: ViewModel, NetworkDataProvider {
 
     func cropImage(_ image: UIImage) {
         navigationHandler(.success(.crop(image)))
-    }
-
-    func openPreferences() {
-        navigationHandler(.success(.preferences))
     }
 }

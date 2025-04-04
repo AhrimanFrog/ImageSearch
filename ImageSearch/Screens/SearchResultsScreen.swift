@@ -27,7 +27,6 @@ final class SearchResultsScreen: ISScreen<SearchResultsViewModel> {
         super.viewDidLoad()
         configure()
         setConstraints()
-        bindNavigation()
         bindViewModel()
     }
 
@@ -37,18 +36,7 @@ final class SearchResultsScreen: ISScreen<SearchResultsViewModel> {
         totalResultsLabel.text = String(localized: "\(viewModel.total.value)_free_images")
         relatedLabel.text = String(localized: "related")
         header.searchField.text = viewModel.query
-    }
-
-    private func bindNavigation() {
-        header.homeButton.addAction(
-            UIAction { [weak self] _ in self?.viewModel.changeState(.success(.start)) },
-            for: .touchUpInside
-        )
-        header.preferencesButton.addAction(
-            UIAction { [weak self]  _ in self?.viewModel.changeState(.success(.preferences)) },
-            for: .touchUpInside
-        )
-        header.searchField.addInputProcessor { [weak self] input in self?.viewModel.displayResults(of: input) }
+        header.delegate = viewModel
     }
 
     private func bindViewModel() {
@@ -97,7 +85,7 @@ final class SearchResultsScreen: ISScreen<SearchResultsViewModel> {
     }
 }
 
-final class SearchResultsViewModel: ViewModel, NetworkDataProvider {
+final class SearchResultsViewModel: ViewModel, NetworkDataProvider, HeaderViewDelegate {
     private static let maximumTags = 8
 
     struct Dependencies {
@@ -119,7 +107,7 @@ final class SearchResultsViewModel: ViewModel, NetworkDataProvider {
     let share: (UIImage, String) -> Void
 
     var query: String { dependencies.query }
-    var changeState: NavigationHandler { dependencies.navigationHandler }
+    var navigationHandler: NavigationHandler { dependencies.navigationHandler }
 
     init(dependencies: Dependencies) {
         self.dependencies = dependencies
@@ -158,7 +146,7 @@ final class SearchResultsViewModel: ViewModel, NetworkDataProvider {
             .sink { [weak self] result in
                 switch result {
                 case .success(let respponse): self?.updateScreen(response: respponse, request: request)
-                case .failure(let error): self?.changeState(.failure(error))
+                case .failure(let error): self?.navigationHandler(.failure(error))
                 }
             }
             .store(in: &disposalBag)
@@ -166,7 +154,7 @@ final class SearchResultsViewModel: ViewModel, NetworkDataProvider {
 
     func openPhotoScreen(forPhoto photo: ISImage) {
         let related = images.value.filter { $0.id != photo.id }.prefix(20)
-        changeState(.success(.photo(photo, Array(related))))
+        navigationHandler(.success(.photo(photo, Array(related))))
     }
 
     private func updateScreen(response: APIImagesResponse, request: String) {
