@@ -30,6 +30,7 @@ class ImageCropScreen: UIViewController {
     }
 
     private func configure(library: PHPhotoLibrary, errorHandler: @escaping (String) -> Void) {
+        view.backgroundColor = .systemGray5
         topBanner.backgroundColor = .systemBackground
         header.delegate = viewModel
         addChild(cropController)
@@ -58,7 +59,8 @@ class ImageCropScreen: UIViewController {
         }
 
         cropController.view.snp.makeConstraints { make in
-            make.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
+            make.horizontalEdges.equalTo(view.safeAreaLayoutGuide)
+            make.bottom.equalTo(view.safeAreaLayoutGuide).offset(-10)
             make.top.equalTo(header.snp.bottom)
         }
     }
